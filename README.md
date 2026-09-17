@@ -300,12 +300,44 @@ hyperparameter sweep.
 | **C3** | = C2 | = C2 | Obsoleted documents filtered or down-weighted | Can validity metadata remove stale answers, and what does it cost in recall? |
 
 **C1's section-aware rule, precisely:** one chunk per section by default,
-prefixed with its full header path (e.g. `"§9.3.1 Retry-After > "`) so the
-chunk stays interpretable on its own. A section longer than 1000 characters —
-deliberately above C0's 800, so C1 isn't just "C0 with a smaller window" — is
-split further, with the header path repeated on every sub-chunk. A section
-shorter than 100 characters (a bare heading, an empty stub) is merged into the
-section that follows rather than kept as a near-empty chunk.
+prefixed with **its own section number and title only** (e.g.
+`"§15.3.1 200 OK > "`) — not the full ancestor path. A section longer than 1000
+characters — deliberately above C0's 800, so C1 isn't just "C0 with a smaller
+window" — is split further, with the leaf prefix repeated on every sub-chunk. A
+section shorter than 100 characters (a bare heading, an empty stub) is merged
+into the section that follows rather than kept as a near-empty chunk.
+
+Leaf-only, not the full breadcrumb, is a deliberate choice: prefixing every
+chunk with its complete ancestor chain (e.g. "Status Codes > Successful 2xx >
+200 OK") would repeat identical text across every sibling section under the
+same parent, which risks diluting exactly what should distinguish their
+embeddings from one another. It would also smuggle a second, untested variable
+into C1 — whether chunking is section-aware, *and* how much ancestor context
+gets prefixed — when the ladder is designed to change exactly one thing at a
+time. Whether the extra ancestor context is worth that risk, particularly for
+broad-category queries whose vocabulary lives in a parent heading and never
+gets restated in the leaf section's own body text, is a real question — see
+*Optional extensions*.
+
+**Section-header detection, precisely** (confirmed against `rfc9110.txt` and
+`rfc2616.txt`): a line counts as a section header only if it starts at column
+0 (no leading whitespace) and matches `^(\d+(\.\d+)*)\.?\s{1,}\S`. This single
+rule is what excludes the Table of Contents for free in both RFC eras — ToC
+entries are always indented, in the 2022-era format (`   1.  Introduction`)
+and the 1999-era one alike (`   1   Introduction .......7`) — without needing
+to detect and strip the ToC block separately. The character after the number
+must not be assumed to be a letter: status-code section titles start with a
+digit (`15.3.1.  200 OK`, or `10.1.1 100 Continue` in the old numbering style
+with a single space and no trailing dot).
+
+**Page-artefact stripping, precisely:** only the pre-2017-ish RFCs in this
+corpus (2616, and the 2014-era 7230–7235/7540) are paginated — detected by the
+presence of any `\f` (form feed) byte. Current-era RFCs (9110 onward) have none
+and need no stripping at all. Where present, each `\f` is flanked by a
+predictable footer/header pair to discard: the last non-blank line before it
+(`Fielding, et al.            Standards Track                     [Page 5]`)
+and the first non-blank line after it
+(`RFC 2616                        HTTP/1.1                       June 1999`).
 
 Held fixed across all four: embedding model (`bge-small-en-v1.5`, 384
 dimensions), k, prompt, generation model, temperature, and the evaluation set.
@@ -483,6 +515,17 @@ configs/          one YAML per configuration C0-C3
 Four scripts and a config file per experiment. No service layer, no web
 frontend, no container orchestration — none of it would demonstrate anything the
 evaluation does not already demonstrate better.
+
+## Running the Project
+
+### Fetching the corpus
+
+Download the 16 RFCs and the official RFC index into the local, git-ignored
+`data/` cache:
+
+```bash
+python scripts/fetch_corpus.py
+```
 
 ## Reproducibility
 
