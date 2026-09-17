@@ -66,7 +66,9 @@ The project will investigate, in order:
    any help is concentrated in identifier-style queries as hypothesised, and how
    much of that help lexical retrieval delivers on its own.
 3. Whether document-validity metadata can suppress confidently-wrong answers
-   sourced from obsoleted specifications, and at what cost in recall.
+   sourced from obsoleted specifications by default, and at what cost in
+   recall — including the cost of wrongly suppressing a query that names an
+   old RFC on purpose, which is the failure mode in the opposite direction.
 4. How much of the remaining error is a retrieval problem and how much is a
    generation problem — measured separately, not inferred from end-to-end
    answer quality.
@@ -153,27 +155,42 @@ RFCs and the index, with an on-disk cache, the same pattern used in my other
 repositories. This keeps the repository small and avoids redistributing text
 whose terms vary by publication year.
 
+**The obsoleted set stays fully indexed and retrievable in every
+configuration, including the ones with no validity handling at all.** This is
+deliberate, not an oversight: obsoleted text is what *creates* the stale-answer
+failure mode, so C0–C2 need it embedded and competing for rank in order for
+there to be anything to measure. If the obsoleted documents were left out of
+the index entirely, the "stale evidence rate" would be zero by construction —
+not because the system got anything right, but because the failure mode had
+nowhere to happen. Only C3 adds a rule on top of the same index that suppresses
+or down-weights obsoleted matches; the documents themselves are never removed.
+This also keeps the corpus able to answer a query that names an old RFC on
+purpose (see the *explicit historical version* category below) — a corpus that
+had quietly dropped the obsoleted text could never do that, regardless of what
+the retrieval logic asked for.
+
 ## Evaluation Dataset
 
-Roughly **60 queries** at full size, hand-written before any retrieval output is
+Roughly **65 queries** at full size, hand-written before any retrieval output is
 inspected, so that the set measures the system rather than being shaped by it.
 Provenance for each query is recorded.
 
 **The set is built in two passes, not all at once.** The MVP needs only 25–30
 queries covering the first three categories — enough to measure C0 against C1
-and get real numbers out of a working pipeline early. Superseded and
-unanswerable queries are written in the second pass, once retrieval is
-trustworthy and the configurations that those categories exist to discriminate
-(C2, C3) are actually being built. Writing all sixty up front would mean
-spending the first week on a benchmark for an implementation that has not yet
-been validated.
+and get real numbers out of a working pipeline early. Superseded, unanswerable
+and explicit-version queries are written in the second pass, once retrieval is
+trustworthy and the configurations those categories exist to discriminate (C2,
+C3) are actually being built. Writing all of it up front would mean spending
+the first week on a benchmark for an implementation that has not yet been
+validated.
 
 | Category | Count | What it tests | Written in |
 |---|---:|---|---|
 | Direct factual | 20 | Single-section answer. The floor: if this is weak, nothing else matters. | MVP |
 | Identifier lookup | 10 | Exact header name, status code, section or RFC number. The category that tests the lexical-retrieval hypothesis. | MVP |
 | Multi-section | 12 | Evidence in two or more sections, often across documents via a cross-reference. | MVP |
-| Superseded | 10 | Answerable from both an obsoleted and a current RFC, where only the current answer is correct. The trap. | Phase 2 |
+| Superseded | 10 | Answerable from both an obsoleted and a current RFC, where only the current answer is correct. The trap in one direction: assume current unless told otherwise. | Phase 2 |
+| Explicit historical version | 6 | Names an old RFC directly (e.g. "In RFC 2616, how is chunked encoding framed?"), where the obsoleted document is the *correct* answer. The trap in the opposite direction: an over-eager validity filter must not suppress a version the user explicitly asked for. | Phase 2 |
 | Unanswerable | 8 | Plausible, on-topic, and genuinely not in the corpus. Correct behaviour is refusal. | Phase 2 |
 
 Recorded per query:
@@ -188,9 +205,28 @@ gold_sections:                  # the unit of truth - see below
 gold_documents: [6585]
 reference_answer: "429 Too Many Requests, optionally with a Retry-After header."
 expected_behaviour: answer      # answer | refuse
-distractor_sections:            # only for superseded queries
-  - {rfc: 2616, section: "10.4"}
+distractor_sections:            # for superseded and explicit-version queries -
+  - {rfc: 2616, section: "10.4"}    # the source that must NOT win
 notes: "Tests whether the exact status code token survives dense-only retrieval."
+```
+
+An *explicit historical version* query inverts which document is gold and
+which is the distractor, versus a *superseded* one:
+
+```yaml
+id: q052
+query: "In RFC 2616, how is a chunked message body terminated?"
+category: explicit_historical_version
+difficulty: medium
+gold_sections:
+  - {rfc: 2616, section: "3.6.1"}   # the obsoleted document is correct HERE
+gold_documents: [2616]
+reference_answer: "By a chunk of size zero, optionally followed by trailer headers."
+expected_behaviour: answer
+distractor_sections:                # the current RFC must NOT override the ask
+  - {rfc: 9112, section: "7.1.1"}
+notes: "Tests whether validity filtering (C3) over-corrects and suppresses a
+  version the query named on purpose."
 ```
 
 **Gold labels are at section granularity, not chunk granularity.** This is the
@@ -313,13 +349,22 @@ The tables the finished README must contain. Empty until measured.
 
 **Retrieval by query category** (Recall@5)
 
-| Config | Direct factual | Identifier | Multi-section | Superseded |
-|---|---:|---:|---:|---:|
-| C0 | — | — | — | — |
-| C1 | — | — | — | — |
-| C2 | — | — | — | — |
-| C3 | — | — | — | — |
-| *D1 (diagnostic)* | — | — | — | — |
+| Config | Direct factual | Identifier | Multi-section | Superseded | Explicit version |
+|---|---:|---:|---:|---:|---:|
+| C0 | — | — | — | — | — |
+| C1 | — | — | — | — | — |
+| C2 | — | — | — | — | — |
+| C3 | — | — | — | — | — |
+| *D1 (diagnostic)* | — | — | — | — | — |
+
+The **Explicit version** column is where C3's validity filter has to earn its
+keep: it needs Superseded to go up without dragging Explicit version down. A
+C3 that wins on the trap and loses on the counter-trap has not solved the
+problem, it has moved it.
+
+Unanswerable has no column here — there is no gold section to recall against a
+query with no answer in the corpus. It is scored on generation instead
+(refusal rate, below).
 
 D1 appears in the retrieval tables only. It is not run through generation, so it
 has no row in the generation or latency tables below.
@@ -469,10 +514,11 @@ complaint can be traced to the ranking that produced it.
 Stated in advance, since most of them are consequences of the design rather than
 things that might go wrong.
 
-- **Sixty queries is a small evaluation set.** Differences of a few points
-  between configurations will not be statistically meaningful. Bootstrap
-  confidence intervals will be reported so the size of that problem is visible
-  rather than implied.
+- **Sixty-odd queries is a small evaluation set**, and the new *explicit
+  historical version* category shrinks the six-query cell further still.
+  Differences of a few points between configurations will not be statistically
+  meaningful. Bootstrap confidence intervals will be reported so the size of
+  that problem is visible rather than implied.
 - **One person wrote both the system and the evaluation set.** Writing the
   queries before inspecting any retrieval output limits the bias; it does not
   remove it.
