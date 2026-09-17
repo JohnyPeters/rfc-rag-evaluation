@@ -253,32 +253,36 @@ directions:**
   exception: 798 of 1497 parsed sections (53%) exceed C1's 1000-character split
   threshold and become several chunks. Retrieval finding *any* of them for that
   section's gold is what should count.
-- **The merge case (a section under 100 characters, glued to the one after it)
-  falls out of the same rule for free.** The merged chunk's character range
-  still spans both original sections' boundaries, so both get credited — no
-  separate rule needed. A consequence worth being explicit about: two different
-  queries, one gold-labelled to the tiny merged-away section and one to the
-  section it was folded into, can legitimately retrieve the *same* chunk. That
-  is correct, not a leak between queries — the chunk really does contain both
-  pieces of text, each query is still scored independently against its own gold
-  set, and in practice a heading too short to stand alone is also too short to
-  be a serious eval query's gold section.
+- **The merge case (a section under 100 characters, glued to the one after
+  it)** needs one more thing to work, caught only once real chunks were built
+  and measured — see the threshold rule immediately below.
 
-**The overlap threshold: 100 characters**, reusing the merge-length constant
-rather than inventing a new number. A chunk counts as mapping to a section only
-if their overlap is at least 100 characters; below that, the mapping is
-dropped as noise (the 11-character sliver above). Below 100 characters of
-actual text there usually isn't enough for the chunk to be genuine evidence for
-that section, and without a floor here, boundary slivers would inflate Recall
-with credit the system didn't really earn.
+**The overlap threshold is `min(100, section_length)`, not a flat 100.** A flat
+100-character floor, applied uniformly, quietly makes it *impossible* for any
+section shorter than 100 characters to ever be credited — not a hypothetical:
+measured directly on the parsed corpus, an 86-section-strong group (`rfc9110`'s
+16-character `"1.  Introduction"` among them) can never reach 100 characters of
+overlap with anything, because the section itself doesn't have 100 characters
+to give. The merge that's supposed to fold such a section into the next one
+does happen correctly at the chunking stage — confirmed by checking that the
+resulting chunk's character range starts exactly at the tiny section's own
+`char_start` — but a flat threshold then silently drops it from the mapping
+regardless, so it can never be scored as "found," no matter how well retrieval
+performs. That is the textbook version of what the Testing section already
+warns about: a bug that produces a plausible, lower-than-deserved number
+instead of an error. Scaling the floor to the section's own size fixes it
+without weakening the noise filter where it matters: a 920-character section
+still needs a genuine 100 characters of overlap (the 11-character sliver from
+the worked example above stays rejected), while a 16-character section only
+needs to be found in full — exactly what a correct merge already produces.
 
 **Scoring, precisely:** for a query with gold sections G, take the top-k
-retrieved chunks, map each to every section it satisfies the 100-character
-threshold against, and union all of that into a single set of "sections found."
-`Recall@k = |sections found ∩ G| / |G|`. Note that `k` — how many chunks were
-retrieved — never appears in that formula except as what bounds the input list;
-it is not the denominator, and it does not grow or shrink because some chunks
-happen to map to more than one section. `k` chunks can yield fewer than `k`
+retrieved chunks, map each to every section it satisfies `min(100,
+section_length)` against, and union all of that into a single set of "sections
+found." `Recall@k = |sections found ∩ G| / |G|`. Note that `k` — how many
+chunks were retrieved — never appears in that formula except as what bounds the
+input list; it is not the denominator, and it does not grow or shrink because
+some chunks happen to map to more than one section. `k` chunks can yield fewer than `k`
 distinct sections (several chunks landing on the same one, the ordinary case
 above) or more than `k` (several chunks each straddling two sections) — either
 way, the denominator stays `|G|`, fixed by the query's own annotation. For MRR,
@@ -351,8 +355,31 @@ prefixed with **its own section number and title only** (e.g.
 `"§15.3.1 200 OK > "`) — not the full ancestor path. A section longer than 1000
 characters — deliberately above C0's 800, so C1 isn't just "C0 with a smaller
 window" — is split further, with the leaf prefix repeated on every sub-chunk. A
-section shorter than 100 characters (a bare heading, an empty stub) is merged
-into the section that follows rather than kept as a near-empty chunk.
+section shorter than 100 characters is merged into the section that follows
+rather than kept as a near-empty chunk.
+
+Two details of that rule that only became precise once measured against the
+real corpus:
+
+- **The 100-character merge threshold applies to the section's body, excluding
+  its own header line.** A header like `"4.  HTTP Frames"` costs ~17 characters
+  on its own before any real content starts; measuring the raw section record
+  (header included) would let a section with almost no substance — one short
+  sentence after the title — survive as its own chunk just because the title
+  pushed the total over 100. Measuring the body only is what the merge rule is
+  actually meant to test: is there real content here, not "is the record long
+  enough."
+- **A short remainder left over at the end of a split section is merged
+  backward, not kept as its own tiny chunk.** Splitting a long section at a
+  fixed 650-character stride does not generally divide it evenly — a 1310-
+  character section, for instance, splits at 0, 650 and then 1300, leaving a
+  final fragment of only 10 characters. Below the same 100-character floor,
+  that fragment is absorbed into the previous sub-chunk (extending it to the
+  section's actual end) rather than emitted as an orphan chunk too short to be
+  useful context or to satisfy the mapping threshold below on its own. This
+  differs in consequence from the inter-section merge case: the *section* is
+  still well represented by its other, larger sub-chunks either way; this only
+  avoids wasting an index entry on a sliver no one needs.
 
 Leaf-only, not the full breadcrumb, is a deliberate choice: prefixing every
 chunk with its complete ancestor chain (e.g. "Status Codes > Successful 2xx >
