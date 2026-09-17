@@ -234,9 +234,56 @@ single most important design decision in the evaluation harness. Chunk
 boundaries change between configurations, so chunk-level gold labels would have
 to be re-annotated for every configuration — and the configurations would then
 no longer be comparable, because each would be scored against its own labels.
-Labelling the *section* that contains the evidence, and mapping every chunk back
-to exactly one section at index time, makes one fixed label set valid across all
-configurations. A chunk counts as a hit when it maps to a gold section.
+Labelling the *section* that contains the evidence, and mapping every chunk to
+the section(s) it overlaps at index time, makes one fixed label set valid
+across all configurations.
+
+**The chunk-to-section mapping is many-to-many, not many-to-one, in both
+directions:**
+
+- **One chunk can map to more than one section.** Overlap (C0's 150-character
+  window overlap; the same mechanism reused inside C1 when a long section is
+  split) means a chunk's character range can straddle two sections' boundaries.
+  Measured on the real corpus (`rfc9110.txt`, sections `10.2.3`/`10.2.4`): a
+  chunk landing across that boundary held 661 characters of one section and 137
+  of the next — clearly evidence for both. A neighbouring chunk in the same
+  sliding window held only an 11-character sliver of the first section — noise,
+  not evidence.
+- **One section can map to more than one chunk**, in the ordinary case, not the
+  exception: 798 of 1497 parsed sections (53%) exceed C1's 1000-character split
+  threshold and become several chunks. Retrieval finding *any* of them for that
+  section's gold is what should count.
+- **The merge case (a section under 100 characters, glued to the one after it)
+  falls out of the same rule for free.** The merged chunk's character range
+  still spans both original sections' boundaries, so both get credited — no
+  separate rule needed. A consequence worth being explicit about: two different
+  queries, one gold-labelled to the tiny merged-away section and one to the
+  section it was folded into, can legitimately retrieve the *same* chunk. That
+  is correct, not a leak between queries — the chunk really does contain both
+  pieces of text, each query is still scored independently against its own gold
+  set, and in practice a heading too short to stand alone is also too short to
+  be a serious eval query's gold section.
+
+**The overlap threshold: 100 characters**, reusing the merge-length constant
+rather than inventing a new number. A chunk counts as mapping to a section only
+if their overlap is at least 100 characters; below that, the mapping is
+dropped as noise (the 11-character sliver above). Below 100 characters of
+actual text there usually isn't enough for the chunk to be genuine evidence for
+that section, and without a floor here, boundary slivers would inflate Recall
+with credit the system didn't really earn.
+
+**Scoring, precisely:** for a query with gold sections G, take the top-k
+retrieved chunks, map each to every section it satisfies the 100-character
+threshold against, and union all of that into a single set of "sections found."
+`Recall@k = |sections found ∩ G| / |G|`. Note that `k` — how many chunks were
+retrieved — never appears in that formula except as what bounds the input list;
+it is not the denominator, and it does not grow or shrink because some chunks
+happen to map to more than one section. `k` chunks can yield fewer than `k`
+distinct sections (several chunks landing on the same one, the ordinary case
+above) or more than `k` (several chunks each straddling two sections) — either
+way, the denominator stays `|G|`, fixed by the query's own annotation. For MRR,
+the rank that counts is the first chunk in ranked order whose mapped section(s)
+intersect `G`.
 
 ## Retrieval Evaluation
 
