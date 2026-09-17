@@ -43,6 +43,12 @@ run with, rather than implementing it. Mode A and the gray zone below stay
 here, because the value there is the back-and-forth, not typing speed — see
 the reasoning in the chat history for why this split exists.
 
+Don't review Mode B output here as a matter of routine — that partly defeats
+the point of offloading it. Bring it back only if something fails or there's
+a real question about it. (Reviewing is cheaper than writing token-for-token,
+but "cheaper than the alternative" isn't the same as "free" — the point of the
+split is to not spend tokens here on mechanical work at all.)
+
 ## Gray zone — draft it, then explain it back before moving on
 
 These get implemented at Mode B speed, but the point of writing them at all is
