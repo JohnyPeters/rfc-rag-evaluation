@@ -88,7 +88,7 @@ Equally important, what this project will **not** do, and why:
 RFC plain text + official index
    -> ingestion:       strip page artefacts, parse the section tree, attach status metadata
    -> chunking:        fixed-window (baseline) or section-aware with header path
-   -> embeddings:      one fixed sentence-embedding model
+   -> embeddings:      one fixed sentence-embedding model (bge-small-en-v1.5)
    -> retrieval:       exact dense search, optionally fused with BM25
    -> validity filter: current vs obsoleted documents
    -> context:         assembled with per-chunk source attribution
@@ -299,11 +299,19 @@ hyperparameter sweep.
 | **C2** | = C1 | Dense + BM25, fused with RRF, top-k 5 | none | Does a lexical signal help, and is the help concentrated in identifier queries? |
 | **C3** | = C2 | = C2 | Obsoleted documents filtered or down-weighted | Can validity metadata remove stale answers, and what does it cost in recall? |
 
-Held fixed across all four: embedding model, k, prompt, generation model,
-temperature, and the evaluation set. `top-k = 5` is the starting point, not a
-tuned value; a small k-sensitivity check (k in {3, 5, 10}) on the best
-configuration is planned so that the choice is reported as measured rather than
-asserted.
+**C1's section-aware rule, precisely:** one chunk per section by default,
+prefixed with its full header path (e.g. `"§9.3.1 Retry-After > "`) so the
+chunk stays interpretable on its own. A section longer than 1000 characters —
+deliberately above C0's 800, so C1 isn't just "C0 with a smaller window" — is
+split further, with the header path repeated on every sub-chunk. A section
+shorter than 100 characters (a bare heading, an empty stub) is merged into the
+section that follows rather than kept as a near-empty chunk.
+
+Held fixed across all four: embedding model (`bge-small-en-v1.5`, 384
+dimensions), k, prompt, generation model, temperature, and the evaluation set.
+`top-k = 5` is the starting point, not a tuned value; a small k-sensitivity
+check (k in {3, 5, 10}) on the best configuration is planned so that the choice
+is reported as measured rather than asserted.
 
 Two things deliberately left out of the ladder and moved to extensions: a
 cross-encoder reranker and query rewriting. Both are likely to help; both would
@@ -481,7 +489,10 @@ evaluation does not already demonstrate better.
 - **Configuration as data.** One YAML per configuration, covering chunking,
   retrieval, k, models and prompt version. Nothing that affects a result lives
   in a function default.
-- **Pinned dependencies**, with the Python version recorded.
+- **Pinned dependencies**, with the Python version recorded. Python 3.14, exact
+  vector search via plain numpy/scikit-learn (no FAISS — unnecessary at this
+  corpus size), `requirements.txt` rather than a lockfile-based manager, to
+  match the rest of the portfolio.
 - **Seeds** fixed and recorded. Retrieval is deterministic by construction;
   generation runs at temperature 0, which reduces variance without eliminating
   it. Where a hosted model is used, the model version and date are recorded, and
@@ -527,9 +538,10 @@ things that might go wrong.
 - **The superseded-query category is constructed.** It shows the failure mode
   exists and can be measured; it says nothing about how often real users would
   hit it.
-- **One corpus, one language, one domain, one embedding model.** Nothing here
-  establishes that the ranking of C0–C3 transfers to a different corpus. The
-  method is the transferable part, not the numbers.
+- **One corpus, one language, one domain, one embedding model
+  (`bge-small-en-v1.5`).** Nothing here establishes that the ranking of C0–C3
+  transfers to a different corpus or a different embedding model. The method
+  is the transferable part, not the numbers.
 - **Exact search removes approximate-search recall loss** from the picture
   entirely. That is the right choice at this size and the wrong assumption at
   scale, and the results should not be read as applying to an ANN deployment.
