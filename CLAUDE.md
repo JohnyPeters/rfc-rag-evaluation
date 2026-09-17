@@ -36,6 +36,13 @@ scope — same as the global rule.
 - File I/O, logging boilerplate
 - Test scaffolding once the first test in a category establishes the pattern
 
+**Tooling split:** Mode B work is offloaded to GitHub Copilot (student pack) to
+save tokens here — this session isn't the one writing it. When a task is Mode
+B, say so explicitly and hand over a short, self-contained prompt Copilot can
+run with, rather than implementing it. Mode A and the gray zone below stay
+here, because the value there is the back-and-forth, not typing speed — see
+the reasoning in the chat history for why this split exists.
+
 ## Gray zone — draft it, then explain it back before moving on
 
 These get implemented at Mode B speed, but the point of writing them at all is
