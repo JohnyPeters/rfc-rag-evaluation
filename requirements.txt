@@ -1,0 +1,16 @@
+# Fetching RFCs
+requests==2.32.5
+# Parsing rfc-index.xml
+lxml==6.0.2
+# Computing embeddings via bge-small-en-v1.5
+sentence-transformers==5.1.1
+# Running the embedding model
+torch==2.9.0
+# Exact vector search
+numpy==2.3.3
+# Exact vector search
+scikit-learn==1.7.2
+# Reading eval YAML files
+PyYAML==6.0.3
+# Tests
+pytest==8.4.2
