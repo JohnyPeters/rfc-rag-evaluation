@@ -6,7 +6,7 @@ named configuration, and every configuration is scored on retrieval and on
 generation separately.
 
 > **Status: MVP in progress.** Ingestion, chunking (C0 and C1), dense
-> retrieval, and the first real evaluation run (26 queries, retrieval metrics
+> retrieval, and the first real evaluation run (31 queries, retrieval metrics
 > only) exist and are measured — see the Retrieval tables below. Generation,
 > C2/C3, the full ~65-query set, latency/cost and every other table are still
 > planned, not implemented; their tables stay empty with `—` until measured,
@@ -190,7 +190,7 @@ validated.
 | Category | Count | What it tests | Written in |
 |---|---:|---|---|
 | Direct factual | 20 | Single-section answer. The floor: if this is weak, nothing else matters. | MVP |
-| Identifier lookup | 10 | Exact header name, status code, section or RFC number. The category that tests the lexical-retrieval hypothesis. | MVP |
+| Identifier lookup | 11 | Exact header name, status code, section or RFC number. The category that tests the lexical-retrieval hypothesis. Grown from an original 6 mid-MVP (`q027`-`q031`), because the first 6 already hit a perfect Recall@5 on C1 - a ceiling that would have left no way to tell whether C2 moves this category at all. | MVP |
 | Multi-section | 12 | Evidence in two or more sections, often across documents via a cross-reference. | MVP |
 | Superseded | 10 | Answerable from both an obsoleted and a current RFC, where only the current answer is correct. The trap in one direction: assume current unless told otherwise. | Phase 2 |
 | Explicit historical version | 6 | Names an old RFC directly (e.g. "In RFC 2616, how is chunked encoding framed?"), where the obsoleted document is the *correct* answer. The trap in the opposite direction: an over-eager validity filter must not suppress a version the user explicitly asked for. | Phase 2 |
@@ -477,34 +477,47 @@ The tables the finished README must contain. Empty until measured.
 
 | Config | Recall@5 | Recall@10 | MRR@10 | Hit rate@5 | Stale evidence rate |
 |---|---:|---:|---:|---:|---:|
-| C0 | 0.7115 | 0.8462 | 0.5125 | 0.7308 | — |
-| C1 | **0.9231** | **0.9423** | **0.7372** | **0.9615** | — |
+| C0 | 0.6935 | 0.8387 | 0.4740 | 0.7097 | — |
+| C1 | **0.9032** | **0.9194** | **0.7043** | **0.9355** | — |
 | C2 | — | — | — | — | — |
 | C3 | — | — | — | — | — |
 | *D1 (diagnostic)* | — | — | — | — | — |
 
-C0/C1 measured on the 26-query MVP set (`eval/queries.yaml`, direct_factual +
-identifier_lookup + multi_section only). Stale evidence rate needs C3's
-validity metadata wired into scoring to mean anything and is left blank until
-then, not computed as zero. `n=26` is small - read these as a first, real
-signal, not a settled result; bootstrap confidence intervals are still owed
-per the Limitations section.
+C0/C1 measured on 31 of the ~65-query full set (`eval/queries.yaml`,
+direct_factual + identifier_lookup + multi_section only; superseded,
+explicit-version and unanswerable are phase 2). identifier_lookup was grown
+from 6 to 11 queries before this run specifically - see the note below the
+per-category table. Stale evidence rate needs C3's validity metadata wired
+into scoring to mean anything and is left blank until then, not computed as
+zero. These `n` are still small - read as a first, real signal, not a
+settled result; bootstrap confidence intervals are still owed per the
+Limitations section.
 
 **Retrieval by query category** (Recall@5)
 
 | Config | Direct factual | Identifier | Multi-section | Superseded | Explicit version |
 |---|---:|---:|---:|---:|---:|
-| C0 | 0.8333 | 0.5000 | 0.6875 | — | — |
-| C1 | **1.0000** | **1.0000** | **0.7500** | — | — |
+| C0 | 0.8333 | 0.5455 | 0.6875 | — | — |
+| C1 | **1.0000** | **0.9091** | **0.7500** | — | — |
 | C2 | — | — | — | — | — |
 | C3 | — | — | — | — | — |
 | *D1 (diagnostic)* | — | — | — | — | — |
 
 Superseded and Explicit version stay blank - phase 2 categories, not yet
-written. The Identifier column is the most striking single result so far:
-C1 reaches perfect Recall@5 with no BM25 involved at all, purely from
-chunk boundaries that stop mixing unrelated facts into one embedding - see
-Error Analysis below for the q026 worked example that shows the mechanism.
+written. Identifier was reinforced from n=6 to n=11 *before* building C2: the
+original six had already reached a perfect 1.0 Recall@5 on C1, a ceiling that
+would have left no way to tell whether C2 improves this category or simply
+can't move a number that's already maxed out. The five queries added
+(`q027`-`q031`) were picked blind to any C2 result, since C2 does not exist
+yet - the same discipline as writing gold labels before inspecting retrieval
+output. Result: C1 is no longer saturated (0.9091, not 1.0) while the core
+finding survives intact - still far ahead of C0's 0.5455, purely from chunk
+boundaries that stop mixing unrelated facts into one embedding (see the q026
+worked example in Error Analysis). One of the five new queries, `q028`
+("What frame type identifies a GOAWAY frame in HTTP/2?", gold RFC 9113 §6.8),
+misses entirely in C1 - not present even in the top 10. It is the first
+concrete candidate to watch when C2 exists: GOAWAY is a rare, distinctive,
+all-caps token exactly the kind BM25's IDF term should reward.
 
 The **Explicit version** column is where C3's validity filter has to earn its
 keep: it needs Superseded to go up without dragging Explicit version down. A
@@ -558,7 +571,7 @@ interview, and it cannot be automated.
 Counts per category, per configuration, with two or three worked examples
 reproduced in full.
 
-**Two real worked examples, from the first MVP run (C0 vs C1, 26 queries):**
+**Two real worked examples, from the first MVP run (C0 vs C1, run twice - 26 then 31 queries after reinforcing identifier_lookup):**
 
 - **Ambiguous query — q020.** Both configurations missed this multi-section
   query entirely (gold at ranks 66 and 316 in C1's dense ranking). The two
