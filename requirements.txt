@@ -10,6 +10,8 @@ torch==2.9.0
 numpy==2.3.3
 # Exact vector search
 scikit-learn==1.7.2
+# BM25 lexical retrieval
+rank_bm25==0.2.2
 # Reading eval YAML files
 PyYAML==6.0.3
 # Tests

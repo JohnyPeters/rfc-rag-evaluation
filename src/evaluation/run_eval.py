@@ -9,7 +9,8 @@ from typing import Any
 
 import yaml
 
-from src.retrieval.dense_search import search
+from src.retrieval import bm25_search, hybrid_search
+from src.retrieval.dense_search import search as dense_search
 from src.retrieval.embed import STRATEGIES, load_chunks
 from .metrics import aggregate, hit_rate_at_k, recall_at_k, reciprocal_rank
 
@@ -32,15 +33,28 @@ def _load_queries(path: Path) -> list[dict[str, Any]]:
 
 def evaluate(strategy: str, *, root: Path | None = None) -> dict[str, Any]:
     """Evaluate one retrieval strategy and return per-query and aggregate scores."""
-    if strategy not in STRATEGIES:
-        raise ValueError(f"strategy must be one of {STRATEGIES}, got {strategy!r}")
+    valid_strategies = (*STRATEGIES, "hybrid_c2", "bm25_d1")
+    if strategy not in valid_strategies:
+        raise ValueError(f"strategy must be one of {valid_strategies}, got {strategy!r}")
     project_root = root or _project_root()
     queries = _load_queries(project_root / "eval" / "queries.yaml")
-    chunks = load_chunks(strategy, project_root / "data")
+    chunk_strategy = "section_aware" if strategy in {"hybrid_c2", "bm25_d1"} else strategy
+    chunks = load_chunks(chunk_strategy, project_root / "data")
 
     per_query: list[dict[str, Any]] = []
     for query in queries:
-        results = search(strategy, str(query["query"]), k=10)
+        if strategy in STRATEGIES:
+            results = dense_search(
+                strategy, str(query["query"]), k=10, data_dir=project_root / "data"
+            )
+        elif strategy == "hybrid_c2":
+            results = hybrid_search.search(
+                str(query["query"]), k=10, data_dir=project_root / "data"
+            )
+        else:
+            results = bm25_search.search(
+                str(query["query"]), k=10, data_dir=project_root / "data"
+            )
         retrieved = [chunks[index] for index, _ in results]
         gold_sections = query["gold_sections"]
         per_query.append(
@@ -95,7 +109,11 @@ def _print_aggregate(scores: dict[str, Any]) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--strategy", required=True, choices=STRATEGIES)
+    parser.add_argument(
+        "--strategy",
+        required=True,
+        choices=(*STRATEGIES, "hybrid_c2", "bm25_d1"),
+    )
     args = parser.parse_args()
 
     scores = evaluate(args.strategy)
