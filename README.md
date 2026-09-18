@@ -479,11 +479,11 @@ The tables the finished README must contain. Empty until measured.
 |---|---:|---:|---:|---:|---:|
 | C0 | 0.6935 | 0.8387 | 0.4740 | 0.7097 | — |
 | C1 | **0.9032** | **0.9194** | **0.7043** | **0.9355** | — |
-| C2 | — | — | — | — | — |
+| C2 | 0.9194 | 0.9355 | 0.7027 | 0.9355 | — |
 | C3 | — | — | — | — | — |
-| *D1 (diagnostic)* | — | — | — | — | — |
+| *D1 (diagnostic)* | 0.7097 | 0.8387 | 0.5320 | 0.8065 | — |
 
-C0/C1 measured on 31 of the ~65-query full set (`eval/queries.yaml`,
+C0/C1/C2/D1 measured on 31 of the ~65-query full set (`eval/queries.yaml`,
 direct_factual + identifier_lookup + multi_section only; superseded,
 explicit-version and unanswerable are phase 2). identifier_lookup was grown
 from 6 to 11 queries before this run specifically - see the note below the
@@ -499,9 +499,16 @@ Limitations section.
 |---|---:|---:|---:|---:|---:|
 | C0 | 0.8333 | 0.5455 | 0.6875 | — | — |
 | C1 | **1.0000** | **0.9091** | **0.7500** | — | — |
-| C2 | — | — | — | — | — |
+| C2 | 1.0000 | 0.9091 | **0.8125** | — | — |
 | C3 | — | — | — | — | — |
-| *D1 (diagnostic)* | — | — | — | — | — |
+| *D1 (diagnostic)* | 0.8333 | 0.7273 | 0.5000 | — | — |
+
+C2's Identifier Recall@5 is identical to C1's (0.9091, not improved) despite
+adding BM25 - not because BM25 failed on this category (D1 alone is weaker
+overall, 0.7273, but gets individual queries C1 misses) but because
+unweighted RRF can lose a hit either input found on its own; see the q028
+worked example in Error Analysis for the specific, measured mechanism.
+Multi-section is where C2 visibly helps (0.75 -> 0.8125).
 
 Superseded and Explicit version stay blank - phase 2 categories, not yet
 written. Identifier was reinforced from n=6 to n=11 *before* building C2: the
@@ -564,6 +571,7 @@ interview, and it cannot be automated.
 | Chunk boundary failure | The gold section was split so that the answer sits across two chunks and neither is self-contained. |
 | Context incomplete | Right section, but the answer needs a definition or cross-reference that was not retrieved. |
 | Stale evidence | Obsoleted document retrieved and used where a current one covers the question. |
+| Cross-document homonym | Two *unrelated* documents (siblings, not one superseding the other) happen to share a term, code or name; distinct from stale evidence, which is specifically about currency between versions of the same thing. |
 | Hallucination despite correct context | Correct evidence present; answer still wrong. A generation failure, not a retrieval one. |
 | Unsupported but answered | Out-of-corpus question answered instead of refused. |
 | Ambiguous query | The query admits more than one reasonable reading, and the gold label picked one. An evaluation-set defect, to be recorded rather than quietly fixed. |
@@ -571,7 +579,7 @@ interview, and it cannot be automated.
 Counts per category, per configuration, with two or three worked examples
 reproduced in full.
 
-**Two real worked examples, from the first MVP run (C0 vs C1, run twice - 26 then 31 queries after reinforcing identifier_lookup):**
+**Three real worked examples, from the first MVP run and the first C2/D1 run:**
 
 - **Ambiguous query — q020.** Both configurations missed this multi-section
   query entirely (gold at ranks 66 and 316 in C1's dense ranking). The two
@@ -595,6 +603,26 @@ reproduced in full.
   result below: a fixed window that crams several unrelated facts into one
   chunk dilutes the embedding of each; a chunk bounded to one section does
   not.
+- **Cross-document homonym, and a real fusion regression — q028** ("What
+  frame type value identifies a GOAWAY frame in HTTP/2?", gold RFC 9113
+  §6.8). Dense alone (C1) misses it entirely (rank 16, outside its own
+  top-5). BM25 alone (D1) finds it perfectly (rank 5, Recall@5 = 1.0). C2 -
+  dense and BM25 fused with unweighted RRF - **also misses it**, the fusion
+  actively losing a hit either input signal contributed on its own. Why:
+  the corpus contains not two but *three* legitimate "GOAWAY" sources
+  competing for this query - the current RFC 9113 §6.8 (gold), the obsoleted
+  RFC 7540 §6.8 (same protocol, prior version - stale evidence), and RFC
+  9114 §7.2.6, HTTP/3's *own*, unrelated GOAWAY frame, also type=0x07, a
+  sibling document that happens to reuse the name and the code, not a
+  superseding one. In the fused ranking, 9114 §7.2.6 takes ranks 1 and 2 and
+  the obsoleted 7540 §6.8 takes rank 3, all ahead of the gold - unweighted
+  RRF rewards moderate agreement across both signals over one signal's
+  strong single conviction, and with three near-duplicate competitors
+  splitting that moderate agreement across dense and BM25, the correctly-
+  identified chunk from D1 alone never surfaces in the fusion. This is the
+  concrete case that motivates the weighted-RRF extension already noted
+  under Optional Extensions and Experiments - not a hypothetical concern
+  about the unweighted default, a measured instance of it.
 
 ## Latency and Cost
 
