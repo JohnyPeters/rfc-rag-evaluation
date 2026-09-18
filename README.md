@@ -355,6 +355,21 @@ hyperparameter sweep.
 | **C2** | = C1 | Dense + BM25, fused with RRF, top-k 5 | none | Does a lexical signal help, and is the help concentrated in identifier queries? |
 | **C3** | = C2 | = C2 | Obsoleted documents filtered or down-weighted | Can validity metadata remove stale answers, and what does it cost in recall? |
 
+**C2's RRF, precisely: unweighted.** `RRF(chunk) = Σ 1/(k + rank)` over
+whichever of the two ranked lists the chunk appears in, with no per-list
+coefficient — dense and BM25 contribute equally. A weighted variant
+(`w_dense · 1/(k+rank_dense) + w_bm25 · 1/(k+rank_bm25)`) could tune the
+balance if fusion turns out to lean too far toward exact-token matches or too
+far toward broad semantic similarity, but that weight is deliberately not
+tuned in the main ladder — it would smuggle a second variable into what C2 is
+meant to test cleanly (does fusion help at all), the same reasoning that kept
+C1's prefix leaf-only. It is also not obviously a single number worth finding:
+the right balance plausibly differs by query category — BM25 more useful for
+identifier lookups, less so for open direct-factual questions — so a single
+global weight tuned to the average query could improve one category while
+quietly hurting another, exactly what the per-category reporting exists to
+catch. See *Optional extensions*.
+
 **C1's section-aware rule, precisely:** one chunk per section by default,
 prefixed with **its own section number and title only** (e.g.
 `"§15.3.1 200 OK > "`) — not the full ancestor path. A section longer than 1000
