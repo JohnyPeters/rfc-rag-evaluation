@@ -143,10 +143,11 @@ Why this corpus:
   and page headers, footers and form feeds to strip — which is genuine
   preprocessing work, not busywork, because those artefacts otherwise land in
   the middle of chunks.
-- **Small enough to stay honest.** Order of 1,200 pages and, depending on
-  configuration, roughly 5,000–8,000 chunks. Exact search over that is
+- **Small enough to stay honest.** Order of 1,200 pages; 1,497 parsed sections;
+  4,075 chunks under C0 (fixed window) and 4,004 under C1 (section-aware),
+  measured directly rather than estimated. Exact search over that is
   instantaneous on a laptop, so no result is confounded by approximate-search
-  recall loss. Figures to be confirmed at ingestion.
+  recall loss.
 - **Adjacent to the rest of my portfolio.** Protocol specifications sit next to
   the systems-programming work rather than repeating the ML work.
 
