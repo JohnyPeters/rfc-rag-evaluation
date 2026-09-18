@@ -215,7 +215,7 @@
   notes: "Same directive name, same document, two different sections with genuinely different meanings depending on message direction."
 
 - id: q020
-  query: "What are the two distinct ways an HTTP/3 connection's transport layer can end, and how do they differ for the client afterward?"
+  query: "In what two distinct ways can an HTTP/3 connection end - one initiated by the application, one by the transport - and how do they differ for the client afterward?"
   category: multi_section
   difficulty: hard
   gold_sections:
@@ -224,6 +224,13 @@
   gold_documents: [9114]
   reference_answer: "Immediate application closure: the implementation itself closes the QUIC connection deliberately, sending a CONNECTION_CLOSE frame. Transport closure: the QUIC transport reports termination to the application for reasons outside its control (peer closure, transport error, network change); if this happens without a prior GOAWAY frame, clients must assume any in-flight request might already have been processed."
   expected_behaviour: answer
+  notes: "Reworded after both configurations missed this entirely (rank 66 and
+    316 for the two gold sections, dense-only). The original wording asked
+    for the two ways 'the transport layer' can end - but section 5.3 is about
+    the *application* deciding to close, not the transport, so the query's
+    own framing pulled toward 5.4 and away from 5.3. Kept as a documented
+    example of a query-wording bias rather than a pure retrieval failure -
+    see README.md Error Analysis."
 
 - id: q021
   query: "Under what condition can a client safely retry a request automatically after a connection closes, and which methods satisfy it by default?"
