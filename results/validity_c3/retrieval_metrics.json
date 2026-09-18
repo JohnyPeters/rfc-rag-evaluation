@@ -1,0 +1,284 @@
+{
+  "per_query": [
+    {
+      "id": "q001",
+      "category": "direct_factual",
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "hit_rate_at_5": 1.0,
+      "mrr": 1.0
+    },
+    {
+      "id": "q002",
+      "category": "direct_factual",
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "hit_rate_at_5": 1.0,
+      "mrr": 1.0
+    },
+    {
+      "id": "q003",
+      "category": "direct_factual",
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "hit_rate_at_5": 1.0,
+      "mrr": 0.5
+    },
+    {
+      "id": "q004",
+      "category": "direct_factual",
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "hit_rate_at_5": 1.0,
+      "mrr": 0.5
+    },
+    {
+      "id": "q005",
+      "category": "direct_factual",
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "hit_rate_at_5": 1.0,
+      "mrr": 1.0
+    },
+    {
+      "id": "q006",
+      "category": "direct_factual",
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "hit_rate_at_5": 1.0,
+      "mrr": 1.0
+    },
+    {
+      "id": "q007",
+      "category": "direct_factual",
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "hit_rate_at_5": 1.0,
+      "mrr": 1.0
+    },
+    {
+      "id": "q008",
+      "category": "direct_factual",
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "hit_rate_at_5": 1.0,
+      "mrr": 1.0
+    },
+    {
+      "id": "q009",
+      "category": "direct_factual",
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "hit_rate_at_5": 1.0,
+      "mrr": 1.0
+    },
+    {
+      "id": "q010",
+      "category": "direct_factual",
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "hit_rate_at_5": 1.0,
+      "mrr": 1.0
+    },
+    {
+      "id": "q011",
+      "category": "direct_factual",
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "hit_rate_at_5": 1.0,
+      "mrr": 1.0
+    },
+    {
+      "id": "q012",
+      "category": "direct_factual",
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "hit_rate_at_5": 1.0,
+      "mrr": 1.0
+    },
+    {
+      "id": "q013",
+      "category": "identifier_lookup",
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "hit_rate_at_5": 1.0,
+      "mrr": 1.0
+    },
+    {
+      "id": "q014",
+      "category": "identifier_lookup",
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "hit_rate_at_5": 1.0,
+      "mrr": 0.5
+    },
+    {
+      "id": "q015",
+      "category": "identifier_lookup",
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "hit_rate_at_5": 1.0,
+      "mrr": 1.0
+    },
+    {
+      "id": "q016",
+      "category": "identifier_lookup",
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "hit_rate_at_5": 1.0,
+      "mrr": 0.5
+    },
+    {
+      "id": "q017",
+      "category": "identifier_lookup",
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "hit_rate_at_5": 1.0,
+      "mrr": 1.0
+    },
+    {
+      "id": "q018",
+      "category": "identifier_lookup",
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "hit_rate_at_5": 1.0,
+      "mrr": 0.5
+    },
+    {
+      "id": "q027",
+      "category": "identifier_lookup",
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "hit_rate_at_5": 1.0,
+      "mrr": 1.0
+    },
+    {
+      "id": "q028",
+      "category": "identifier_lookup",
+      "recall_at_5": 0.0,
+      "recall_at_10": 1.0,
+      "hit_rate_at_5": 0.0,
+      "mrr": 0.125
+    },
+    {
+      "id": "q029",
+      "category": "identifier_lookup",
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "hit_rate_at_5": 1.0,
+      "mrr": 1.0
+    },
+    {
+      "id": "q030",
+      "category": "identifier_lookup",
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "hit_rate_at_5": 1.0,
+      "mrr": 1.0
+    },
+    {
+      "id": "q031",
+      "category": "identifier_lookup",
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "hit_rate_at_5": 1.0,
+      "mrr": 0.5
+    },
+    {
+      "id": "q019",
+      "category": "multi_section",
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "hit_rate_at_5": 1.0,
+      "mrr": 1.0
+    },
+    {
+      "id": "q020",
+      "category": "multi_section",
+      "recall_at_5": 0.0,
+      "recall_at_10": 0.0,
+      "hit_rate_at_5": 0.0,
+      "mrr": 0.0
+    },
+    {
+      "id": "q021",
+      "category": "multi_section",
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "hit_rate_at_5": 1.0,
+      "mrr": 1.0
+    },
+    {
+      "id": "q022",
+      "category": "multi_section",
+      "recall_at_5": 0.5,
+      "recall_at_10": 1.0,
+      "hit_rate_at_5": 1.0,
+      "mrr": 1.0
+    },
+    {
+      "id": "q023",
+      "category": "multi_section",
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "hit_rate_at_5": 1.0,
+      "mrr": 0.5
+    },
+    {
+      "id": "q024",
+      "category": "multi_section",
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "hit_rate_at_5": 1.0,
+      "mrr": 0.5
+    },
+    {
+      "id": "q025",
+      "category": "multi_section",
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "hit_rate_at_5": 1.0,
+      "mrr": 1.0
+    },
+    {
+      "id": "q026",
+      "category": "multi_section",
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "hit_rate_at_5": 1.0,
+      "mrr": 1.0
+    }
+  ],
+  "aggregate": {
+    "overall": {
+      "recall_at_5": 0.9193548387096774,
+      "recall_at_10": 0.967741935483871,
+      "hit_rate_at_5": 0.9354838709677419,
+      "mrr": 0.8104838709677419
+    },
+    "overall_n": 31,
+    "by_category": {
+      "direct_factual": {
+        "recall_at_5": 1.0,
+        "recall_at_10": 1.0,
+        "hit_rate_at_5": 1.0,
+        "mrr": 0.9166666666666666,
+        "n": 12
+      },
+      "identifier_lookup": {
+        "recall_at_5": 0.9090909090909091,
+        "recall_at_10": 1.0,
+        "hit_rate_at_5": 0.9090909090909091,
+        "mrr": 0.7386363636363636,
+        "n": 11
+      },
+      "multi_section": {
+        "recall_at_5": 0.8125,
+        "recall_at_10": 0.875,
+        "hit_rate_at_5": 0.875,
+        "mrr": 0.75,
+        "n": 8
+      }
+    }
+  }
+}
