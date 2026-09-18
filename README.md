@@ -33,7 +33,7 @@ properties that a convenience corpus lacks:
    correctness failure that prompt engineering cannot reach, and it is invisible
    to any metric that only asks whether the retrieved passage is *on topic*.
 
-2. **The text is identifier-dense.** `Retry-After`, status code `429`,
+2. **The text is identifier-dense.** `Retry-After`, status code `301`,
    `Section 9.3.1`, `RFC 9111`. The working hypothesis — to be tested, not
    assumed — is that exact identifiers like these are poorly served by semantic
    similarity alone: they are short, low-context and arbitrary, so the
@@ -198,17 +198,21 @@ Recorded per query:
 
 ```yaml
 id: q017
-query: "What does a server send when it rejects a request for exceeding a rate limit?"
+query: "What header field tells a client how long to wait before retrying, and what two formats can its value take?"
 category: identifier_lookup
 difficulty: medium
 gold_sections:                  # the unit of truth - see below
-  - {rfc: 6585, section: "4"}
-gold_documents: [6585]
-reference_answer: "429 Too Many Requests, optionally with a Retry-After header."
+  - {rfc: 9110, section: "10.2.3"}
+gold_documents: [9110]
+reference_answer: "Retry-After. Its value is either an HTTP-date or a number of delay-seconds."
 expected_behaviour: answer      # answer | refuse
 distractor_sections:            # for superseded and explicit-version queries -
-  - {rfc: 2616, section: "10.4"}    # the source that must NOT win
-notes: "Tests whether the exact status code token survives dense-only retrieval."
+  - {rfc: 2616, section: "14.37"}   # the obsoleted source that must NOT win
+notes: "Tests whether the exact header-field token survives dense-only retrieval.
+  (An earlier draft of this example used RFC 6585 and status 429 - verified
+  against the fetched corpus and found not to exist in it; 6585 was never one
+  of the 16 documents fetched. Replaced with Retry-After, confirmed present at
+  this exact location in both rfc9110.txt and rfc2616.txt.)"
 ```
 
 An *explicit historical version* query inverts which document is gold and
