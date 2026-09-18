@@ -5,10 +5,12 @@ as a measurement harness rather than a demo: every pipeline design decision is a
 named configuration, and every configuration is scored on retrieval and on
 generation separately.
 
-> **Status: specification.** Nothing here is implemented yet. This README is the
-> design document the implementation will follow. Every results table below is
-> deliberately empty — no metric in this repository has been measured, and none
-> should be quoted until it has.
+> **Status: MVP in progress.** Ingestion, chunking (C0 and C1), dense
+> retrieval, and the first real evaluation run (26 queries, retrieval metrics
+> only) exist and are measured — see the Retrieval tables below. Generation,
+> C2/C3, the full ~65-query set, latency/cost and every other table are still
+> planned, not implemented; their tables stay empty with `—` until measured,
+> and none of those numbers should be quoted yet.
 
 ---
 
@@ -475,21 +477,34 @@ The tables the finished README must contain. Empty until measured.
 
 | Config | Recall@5 | Recall@10 | MRR@10 | Hit rate@5 | Stale evidence rate |
 |---|---:|---:|---:|---:|---:|
-| C0 | — | — | — | — | — |
-| C1 | — | — | — | — | — |
+| C0 | 0.7115 | 0.8462 | 0.5125 | 0.7308 | — |
+| C1 | **0.9231** | **0.9423** | **0.7372** | **0.9615** | — |
 | C2 | — | — | — | — | — |
 | C3 | — | — | — | — | — |
 | *D1 (diagnostic)* | — | — | — | — | — |
+
+C0/C1 measured on the 26-query MVP set (`eval/queries.yaml`, direct_factual +
+identifier_lookup + multi_section only). Stale evidence rate needs C3's
+validity metadata wired into scoring to mean anything and is left blank until
+then, not computed as zero. `n=26` is small - read these as a first, real
+signal, not a settled result; bootstrap confidence intervals are still owed
+per the Limitations section.
 
 **Retrieval by query category** (Recall@5)
 
 | Config | Direct factual | Identifier | Multi-section | Superseded | Explicit version |
 |---|---:|---:|---:|---:|---:|
-| C0 | — | — | — | — | — |
-| C1 | — | — | — | — | — |
+| C0 | 0.8333 | 0.5000 | 0.6875 | — | — |
+| C1 | **1.0000** | **1.0000** | **0.7500** | — | — |
 | C2 | — | — | — | — | — |
 | C3 | — | — | — | — | — |
 | *D1 (diagnostic)* | — | — | — | — | — |
+
+Superseded and Explicit version stay blank - phase 2 categories, not yet
+written. The Identifier column is the most striking single result so far:
+C1 reaches perfect Recall@5 with no BM25 involved at all, purely from
+chunk boundaries that stop mixing unrelated facts into one embedding - see
+Error Analysis below for the q026 worked example that shows the mechanism.
 
 The **Explicit version** column is where C3's validity filter has to earn its
 keep: it needs Superseded to go up without dragging Explicit version down. A
@@ -542,6 +557,31 @@ interview, and it cannot be automated.
 
 Counts per category, per configuration, with two or three worked examples
 reproduced in full.
+
+**Two real worked examples, from the first MVP run (C0 vs C1, 26 queries):**
+
+- **Ambiguous query — q020.** Both configurations missed this multi-section
+  query entirely (gold at ranks 66 and 316 in C1's dense ranking). The two
+  gold sections describe two different mechanisms — one where the
+  application decides to close an HTTP/3 connection, one where the transport
+  reports closure to it — but the original query asked for "the two ways the
+  *transport layer* can end" the connection, which only actually describes
+  one of the two gold sections. Rewording to name both mechanisms neutrally
+  closed the gap between their ranks from 250 to 18 (66 vs 316 → 99 vs 117) —
+  confirming the asymmetry was the query's own framing, not a system fault —
+  but did not fix the retrieval miss itself: both sections still rank far
+  outside any reasonable top-k after the reword. Recorded as a genuinely hard
+  case now that the bias is removed, not a solved one.
+- **Ranked too low, with a chunking explanation — q026** (400 vs 404). C0
+  never finds either gold section within the top 10 (ranks 14, 34 and 100,
+  every one of those chunks a fixed window mixing 2-3 unrelated status codes
+  together — e.g. one chunk spans sections 15.5, 15.5.1 *and* 15.5.2 at once).
+  C1 finds 400 at rank 2 in a chunk containing only that one status code, and
+  404 at rank 14 - just outside the cutoff, but an order of magnitude closer
+  than C0's equivalent miss. The same mechanism as the identifier-lookup
+  result below: a fixed window that crams several unrelated facts into one
+  chunk dilutes the embedding of each; a chunk bounded to one section does
+  not.
 
 ## Latency and Cost
 
