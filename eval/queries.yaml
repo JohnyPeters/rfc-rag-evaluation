@@ -1,0 +1,293 @@
+# MVP evaluation set — direct_factual, identifier_lookup, multi_section only.
+# Superseded, explicit_historical_version and unanswerable categories are
+# written in phase 2 (see README.md "Evaluation Dataset"). Every gold_sections
+# entry below was verified against data/processed/sections/rfc<N>.json before
+# being written here — none of these is invented from general HTTP knowledge
+# without checking it is actually present in this corpus (see the q017-style
+# mistake documented in README.md's Evaluation Dataset example, which is why
+# this note exists).
+
+# ---------------------------------------------------------------------------
+# direct_factual (12)
+# ---------------------------------------------------------------------------
+
+- id: q001
+  query: "What does a 404 status code indicate about a resource?"
+  category: direct_factual
+  difficulty: easy
+  gold_sections:
+    - {rfc: 9110, section: "15.5.5"}
+  gold_documents: [9110]
+  reference_answer: "The origin server did not find a current representation for the target resource, or is not willing to disclose that one exists."
+  expected_behaviour: answer
+
+- id: q002
+  query: "What does a 503 response indicate, and what may the server send along with it?"
+  category: direct_factual
+  difficulty: easy
+  gold_sections:
+    - {rfc: 9110, section: "15.6.4"}
+  gold_documents: [9110]
+  reference_answer: "The server is temporarily unable to handle the request due to overload or scheduled maintenance. It may send a Retry-After header field to suggest how long to wait."
+  expected_behaviour: answer
+
+- id: q003
+  query: "What must a cache not do when a request or response carries the no-store directive?"
+  category: direct_factual
+  difficulty: medium
+  gold_sections:
+    - {rfc: 9111, section: "5.2.1.5"}
+  gold_documents: [9111]
+  reference_answer: "A cache must not store any part of either the request or any response to it, in either private or shared caches."
+  expected_behaviour: answer
+
+- id: q004
+  query: "What problem does flow control solve in HTTP/2?"
+  category: direct_factual
+  difficulty: medium
+  gold_sections:
+    - {rfc: 9113, section: "5.2"}
+  gold_documents: [9113]
+  reference_answer: "Using streams for multiplexing introduces contention over the shared TCP connection, which can block streams; flow control ensures streams on the same connection do not destructively interfere with each other."
+  expected_behaviour: answer
+
+- id: q005
+  query: "What are the two tables HPACK uses to associate header fields with indexes?"
+  category: direct_factual
+  difficulty: easy
+  gold_sections:
+    - {rfc: 7541, section: "2.3"}
+  gold_documents: [7541]
+  reference_answer: "A static table, which is predefined and contains common header fields, and a dynamic table, which the encoder builds up to index header fields repeated within the encoded header lists."
+  expected_behaviour: answer
+
+- id: q006
+  query: "Does the QPACK static table start indexing from 0 or from 1?"
+  category: direct_factual
+  difficulty: medium
+  gold_sections:
+    - {rfc: 9204, section: "3.1"}
+  gold_documents: [9204]
+  reference_answer: "From 0. (The HPACK static table, by contrast, is indexed from 1.)"
+  expected_behaviour: answer
+
+- id: q007
+  query: "What does the Secure attribute limit about a cookie's scope?"
+  category: direct_factual
+  difficulty: easy
+  gold_sections:
+    - {rfc: 6265, section: "4.1.2.5"}
+  gold_documents: [6265]
+  reference_answer: "It limits the cookie to secure channels: the user agent includes the cookie in a request only if that request is transmitted over a secure channel, typically HTTP over TLS."
+  expected_behaviour: answer
+
+- id: q008
+  query: "What is gzip coding, and what should a recipient treat as equivalent to it?"
+  category: direct_factual
+  difficulty: medium
+  gold_sections:
+    - {rfc: 9110, section: "8.4.1.3"}
+  gold_documents: [9110]
+  reference_answer: "An LZ77 coding with a 32-bit CRC, commonly produced by the gzip program. A recipient should treat \"x-gzip\" as equivalent to \"gzip\"."
+  expected_behaviour: answer
+
+- id: q009
+  query: "Why does RFC 9111 deprecate the Pragma header field?"
+  category: direct_factual
+  difficulty: medium
+  gold_sections:
+    - {rfc: 9111, section: "5.4"}
+  gold_documents: [9111]
+  reference_answer: "Pragma was defined for HTTP/1.0 caches, before Cache-Control existed, so clients could request \"no-cache\". Support for Cache-Control is now widespread, so Pragma is deprecated."
+  expected_behaviour: answer
+
+- id: q010
+  query: "Does HTTP/2 support the 101 Switching Protocols status code?"
+  category: direct_factual
+  difficulty: medium
+  gold_sections:
+    - {rfc: 9113, section: "8.6"}
+  gold_documents: [9113]
+  reference_answer: "No. HTTP/2 does not support the 101 (Switching Protocols) informational status code; similar functionality can be enabled through extended CONNECT instead."
+  expected_behaviour: answer
+
+- id: q011
+  query: "Why are unconstrained multiple range requests a denial-of-service concern?"
+  category: direct_factual
+  difficulty: medium
+  gold_sections:
+    - {rfc: 9110, section: "17.15"}
+  gold_documents: [9110]
+  reference_answer: "The effort required to request many overlapping ranges of the same data is tiny compared to the time, memory and bandwidth the server consumes trying to serve the requested data in many parts."
+  expected_behaviour: answer
+
+- id: q012
+  query: "What does the HttpOnly cookie attribute do, and is it related to the Secure attribute?"
+  category: direct_factual
+  difficulty: easy
+  gold_sections:
+    - {rfc: 6265, section: "4.1.2.6"}
+  gold_documents: [6265]
+  reference_answer: "It limits the cookie's scope to HTTP requests, instructing the user agent to omit it from non-HTTP APIs such as scripts. It is independent of the Secure attribute - a cookie can have either, both, or neither."
+  expected_behaviour: answer
+
+# ---------------------------------------------------------------------------
+# identifier_lookup (6) — exact header names, status codes, frame types
+# ---------------------------------------------------------------------------
+
+- id: q013
+  query: "What status code tells a client the server refuses to continue with the current protocol but might upgrade?"
+  category: identifier_lookup
+  difficulty: medium
+  gold_sections:
+    - {rfc: 9110, section: "15.5.22"}
+  gold_documents: [9110]
+  reference_answer: "426 Upgrade Required. The server must also send an Upgrade header field naming the required protocol(s)."
+  expected_behaviour: answer
+  notes: "Tests whether the exact status code and its paired header field survive dense-only retrieval."
+
+- id: q014
+  query: "What header field lets a client authenticate itself to a proxy, as opposed to the origin server?"
+  category: identifier_lookup
+  difficulty: medium
+  gold_sections:
+    - {rfc: 9110, section: "11.7.2"}
+  gold_documents: [9110]
+  reference_answer: "Proxy-Authorization."
+  expected_behaviour: answer
+
+- id: q015
+  query: "What header field carries the timestamp of when a representation was last modified?"
+  category: identifier_lookup
+  difficulty: easy
+  gold_sections:
+    - {rfc: 9110, section: "8.8.2"}
+  gold_documents: [9110]
+  reference_answer: "Last-Modified, whose value is an HTTP-date."
+  expected_behaviour: answer
+
+- id: q016
+  query: "What frame type value identifies a SETTINGS frame in HTTP/2?"
+  category: identifier_lookup
+  difficulty: hard
+  gold_sections:
+    - {rfc: 9113, section: "6.5.1"}
+  gold_documents: [9113]
+  reference_answer: "Type=0x04."
+  expected_behaviour: answer
+  notes: "Tests whether a bare hex frame-type constant survives dense-only retrieval - one of the least semantically rich tokens in the corpus."
+
+- id: q017
+  query: "What status code indicates the server cannot process a request due to malformed syntax or invalid message framing?"
+  category: identifier_lookup
+  difficulty: easy
+  gold_sections:
+    - {rfc: 9110, section: "15.5.1"}
+  gold_documents: [9110]
+  reference_answer: "400 Bad Request."
+  expected_behaviour: answer
+  notes: "Corrected from an earlier draft that used RFC 6585 / status 429; that RFC was never part of the fetched 16-document corpus. See README.md's Evaluation Dataset section for the full account of that mistake."
+
+- id: q018
+  query: "What frame type value identifies a DATA frame in HTTP/3?"
+  category: identifier_lookup
+  difficulty: hard
+  gold_sections:
+    - {rfc: 9114, section: "7.2.1"}
+  gold_documents: [9114]
+  reference_answer: "Type=0x00."
+  expected_behaviour: answer
+
+# ---------------------------------------------------------------------------
+# multi_section (8) — evidence genuinely needs two sections
+# ---------------------------------------------------------------------------
+
+- id: q019
+  query: "How does the meaning of the max-age directive differ depending on whether it appears in a request or a response?"
+  category: multi_section
+  difficulty: hard
+  gold_sections:
+    - {rfc: 9111, section: "5.2.1.1"}
+    - {rfc: 9111, section: "5.2.2.1"}
+  gold_documents: [9111]
+  reference_answer: "As a request directive, max-age says the client wants a response no older than the given number of seconds. As a response directive, max-age says the response should be considered stale once it is older than that."
+  expected_behaviour: answer
+  notes: "Same directive name, same document, two different sections with genuinely different meanings depending on message direction."
+
+- id: q020
+  query: "What are the two distinct ways an HTTP/3 connection's transport layer can end, and how do they differ for the client afterward?"
+  category: multi_section
+  difficulty: hard
+  gold_sections:
+    - {rfc: 9114, section: "5.3"}
+    - {rfc: 9114, section: "5.4"}
+  gold_documents: [9114]
+  reference_answer: "Immediate application closure: the implementation itself closes the QUIC connection deliberately, sending a CONNECTION_CLOSE frame. Transport closure: the QUIC transport reports termination to the application for reasons outside its control (peer closure, transport error, network change); if this happens without a prior GOAWAY frame, clients must assume any in-flight request might already have been processed."
+  expected_behaviour: answer
+
+- id: q021
+  query: "Under what condition can a client safely retry a request automatically after a connection closes, and which methods satisfy it by default?"
+  category: multi_section
+  difficulty: hard
+  gold_sections:
+    - {rfc: 9112, section: "9.3.1"}
+    - {rfc: 9110, section: "9.2.2"}
+  gold_documents: [9112, 9110]
+  reference_answer: "A request can be safely retried automatically if its method is idempotent - repeating it has the same effect as sending it once. PUT, DELETE and the safe methods are idempotent by default."
+  expected_behaviour: answer
+  notes: "9112 section 9.3.1 explicitly defers the actual criterion to section 9.2.2 of [HTTP] - a genuine cross-document reference, not an invented pairing."
+
+- id: q022
+  query: "What happens to HTTP/2 throughput if an endpoint doesn't keep enough flow-control window available for its peer?"
+  category: multi_section
+  difficulty: medium
+  gold_sections:
+    - {rfc: 9113, section: "5.2"}
+    - {rfc: 9113, section: "5.2.3"}
+  gold_documents: [9113]
+  reference_answer: "Flow control exists to stop streams from destructively interfering with each other over the shared connection; but if an endpoint fails to keep the window larger than the bandwidth-delay product, receive throughput is limited by flow control itself, degrading performance. Sending timely WINDOW_UPDATE frames improves it."
+  expected_behaviour: answer
+
+- id: q023
+  query: "How is the size of an entry in HPACK's dynamic table calculated, given that the dynamic table indexes header fields?"
+  category: multi_section
+  difficulty: hard
+  gold_sections:
+    - {rfc: 7541, section: "2.3"}
+    - {rfc: 7541, section: "4.1"}
+  gold_documents: [7541]
+  reference_answer: "The dynamic table (introduced alongside the static table for indexing header fields) holds entries whose size is the sum of the name's length in octets, the value's length in octets, and 32 additional octets - calculated on the unencoded name and value, without any Huffman encoding applied."
+  expected_behaviour: answer
+
+- id: q024
+  query: "How do QPACK's static and dynamic tables differ in how their entries are indexed and how long entries persist?"
+  category: multi_section
+  difficulty: hard
+  gold_sections:
+    - {rfc: 9204, section: "3.1"}
+    - {rfc: 9204, section: "3.2"}
+  gold_documents: [9204]
+  reference_answer: "The static table is a predefined list with a fixed index over time, indexed from 0. The dynamic table is a first-in-first-out list the encoder and decoder build up together, starting empty, and can contain duplicate entries."
+  expected_behaviour: answer
+
+- id: q025
+  query: "Both the Secure and HttpOnly cookie attributes restrict a cookie's scope - restrict it to what, respectively, and are the two independent of each other?"
+  category: multi_section
+  difficulty: medium
+  gold_sections:
+    - {rfc: 6265, section: "4.1.2.5"}
+    - {rfc: 6265, section: "4.1.2.6"}
+  gold_documents: [6265]
+  reference_answer: "Secure restricts a cookie to secure (e.g. TLS) channels. HttpOnly restricts a cookie to HTTP requests, hiding it from non-HTTP APIs like browser scripts. They are independent - a cookie can carry either, both, or neither."
+  expected_behaviour: answer
+
+- id: q026
+  query: "400 Bad Request and 404 Not Found are both client-error status codes - what is the actual difference in what each one tells the client?"
+  category: multi_section
+  difficulty: medium
+  gold_sections:
+    - {rfc: 9110, section: "15.5.1"}
+    - {rfc: 9110, section: "15.5.5"}
+  gold_documents: [9110]
+  reference_answer: "400 means the server perceives an error in the request itself (malformed syntax, invalid framing, deceptive routing). 404 means the request was understood but the origin server found no current representation for the target resource, or won't disclose that one exists."
+  expected_behaviour: answer
