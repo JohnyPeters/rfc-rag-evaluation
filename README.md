@@ -480,7 +480,7 @@ The tables the finished README must contain. Empty until measured.
 | C0 | 0.6935 | 0.8387 | 0.4740 | 0.7097 | — |
 | C1 | **0.9032** | **0.9194** | **0.7043** | **0.9355** | — |
 | C2 | 0.9194 | 0.9355 | 0.7027 | 0.9355 | — |
-| C3 | — | — | — | — | — |
+| C3 | 0.9194 | **0.9677** | **0.8105** | 0.9355 | — |
 | *D1 (diagnostic)* | 0.7097 | 0.8387 | 0.5320 | 0.8065 | — |
 
 C0/C1/C2/D1 measured on 31 of the ~65-query full set (`eval/queries.yaml`,
@@ -500,7 +500,7 @@ Limitations section.
 | C0 | 0.8333 | 0.5455 | 0.6875 | — | — |
 | C1 | **1.0000** | **0.9091** | **0.7500** | — | — |
 | C2 | 1.0000 | 0.9091 | **0.8125** | — | — |
-| C3 | — | — | — | — | — |
+| C3 | 1.0000 | 0.9091 | 0.8125 | — | — |
 | *D1 (diagnostic)* | 0.8333 | 0.7273 | 0.5000 | — | — |
 
 C2's Identifier Recall@5 is identical to C1's (0.9091, not improved) despite
@@ -508,6 +508,20 @@ adding BM25 - not because BM25 failed on this category (D1 alone is weaker
 overall, 0.7273, but gets individual queries C1 misses) but because
 unweighted RRF can lose a hit either input found on its own; see the q028
 worked example in Error Analysis for the specific, measured mechanism.
+
+C3's Recall@5 is unchanged from C2 in every column - the validity filter
+only reorders candidates, it cannot pull a chunk into the top-5 that was not
+already a candidate. What it does move is rank *within* the list: q028
+(GOAWAY) goes from beyond rank 10 in C2 (MRR 0.0) to rank 8 in C3 (MRR
+0.125) - real progress, not visible in Recall@5 or Recall@10 at k=10 exactly
+because it now clears 10 but does not clear 5. This is the precise, expected
+boundary of what C3 was built to fix: it demoted the obsoleted RFC 7540
+competitor (stale evidence), which is why the query moved at all, but RFC
+9114's homonym GOAWAY was never obsoleted and so was never touched by this
+filter - the residual miss is now attributable specifically to the
+cross-document homonym, a different, undesigned-for failure mode. Overall
+MRR@10 rose from 0.7027 (C2) to 0.8105 - the filter's effect shows up mainly
+as rank improvement across many queries, not new hits at k=5.
 Multi-section is where C2 visibly helps (0.75 -> 0.8125).
 
 Superseded and Explicit version stay blank - phase 2 categories, not yet
@@ -623,6 +637,18 @@ reproduced in full.
   concrete case that motivates the weighted-RRF extension already noted
   under Optional Extensions and Experiments - not a hypothetical concern
   about the unweighted default, a measured instance of it.
+
+  **Follow-up under C3.** The validity filter demotes RFC 7540's competing
+  chunk (obsoleted, and 9113 - its replacement - is present among the
+  candidates), which is precisely the stale-evidence half of this query's
+  problem. Effect: the gold moves from beyond rank 10 (MRR 0.0 under C2) to
+  rank 8 (MRR 0.125) - real, measured progress, still short of the top-5.
+  RFC 9114's homonym GOAWAY is left untouched, correctly - it was never
+  obsoleted, so the filter has no basis to move it, and it still occupies
+  the ranks the demoted 7540 chunk vacated. The residual failure is now
+  attributable specifically to the cross-document homonym, cleanly
+  separated from the stale-evidence portion C3 already fixed - exactly the
+  boundary the filter was designed to have, not a shortfall in it.
 
 ## Latency and Cost
 
@@ -766,4 +792,14 @@ things that might go wrong.
 - **LLM-as-judge is a proxy**, mitigated by measuring agreement rather than by
   assertion.
 - **Single-turn only.** No conversational context, no follow-up resolution.
+- **A third query mode is not handled at all: questions genuinely about how
+  something evolved across versions** (e.g. "how has Retry-After's definition
+  changed since HTTP/1.1?"). C3's validity filter only ever implements two
+  behaviours — prefer the current version by default, or respect an
+  explicitly named old RFC — neither of which is "surface several eras
+  together because the question is about the change itself." This corpus,
+  built around a real supersession graph, is exactly the kind of corpus where
+  that third mode would be common in practice; this project does not attempt
+  it. See *Optional extensions* for the two mechanisms (LLM query
+  classification, evolution-aware grouping) that would be needed.
 

@@ -9,7 +9,7 @@ from typing import Any
 
 import yaml
 
-from src.retrieval import bm25_search, hybrid_search
+from src.retrieval import bm25_search, hybrid_search, validity_search
 from src.retrieval.dense_search import search as dense_search
 from src.retrieval.embed import STRATEGIES, load_chunks
 from .metrics import aggregate, hit_rate_at_k, recall_at_k, reciprocal_rank
@@ -33,12 +33,16 @@ def _load_queries(path: Path) -> list[dict[str, Any]]:
 
 def evaluate(strategy: str, *, root: Path | None = None) -> dict[str, Any]:
     """Evaluate one retrieval strategy and return per-query and aggregate scores."""
-    valid_strategies = (*STRATEGIES, "hybrid_c2", "bm25_d1")
+    valid_strategies = (*STRATEGIES, "hybrid_c2", "bm25_d1", "validity_c3")
     if strategy not in valid_strategies:
         raise ValueError(f"strategy must be one of {valid_strategies}, got {strategy!r}")
     project_root = root or _project_root()
     queries = _load_queries(project_root / "eval" / "queries.yaml")
-    chunk_strategy = "section_aware" if strategy in {"hybrid_c2", "bm25_d1"} else strategy
+    chunk_strategy = (
+        "section_aware"
+        if strategy in {"hybrid_c2", "bm25_d1", "validity_c3"}
+        else strategy
+    )
     chunks = load_chunks(chunk_strategy, project_root / "data")
 
     per_query: list[dict[str, Any]] = []
@@ -51,8 +55,12 @@ def evaluate(strategy: str, *, root: Path | None = None) -> dict[str, Any]:
             results = hybrid_search.search(
                 str(query["query"]), k=10, data_dir=project_root / "data"
             )
-        else:
+        elif strategy == "bm25_d1":
             results = bm25_search.search(
+                str(query["query"]), k=10, data_dir=project_root / "data"
+            )
+        else:
+            results = validity_search.search(
                 str(query["query"]), k=10, data_dir=project_root / "data"
             )
         retrieved = [chunks[index] for index, _ in results]
@@ -112,7 +120,7 @@ def main() -> None:
     parser.add_argument(
         "--strategy",
         required=True,
-        choices=(*STRATEGIES, "hybrid_c2", "bm25_d1"),
+        choices=(*STRATEGIES, "hybrid_c2", "bm25_d1", "validity_c3"),
     )
     args = parser.parse_args()
 
