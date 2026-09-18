@@ -198,6 +198,62 @@
   reference_answer: "Type=0x00."
   expected_behaviour: answer
 
+# --- identifier_lookup reinforcement (5 more, added before building C2) ---
+# Deliberately arid: bare hex frame types and error codes, chosen because
+# q013-q018 already reached perfect Recall@5 on C1 with n=6 - a ceiling that
+# leaves no room to show whether BM25/C2 helps. These are picked blind to any
+# C2 result, since C2 does not exist yet. See README.md Evaluation Dataset.
+
+- id: q027
+  query: "What frame type value identifies a WINDOW_UPDATE frame in HTTP/2?"
+  category: identifier_lookup
+  difficulty: hard
+  gold_sections:
+    - {rfc: 9113, section: "6.9"}
+  gold_documents: [9113]
+  reference_answer: "Type=0x08."
+  expected_behaviour: answer
+
+- id: q028
+  query: "What frame type value identifies a GOAWAY frame in HTTP/2?"
+  category: identifier_lookup
+  difficulty: hard
+  gold_sections:
+    - {rfc: 9113, section: "6.8"}
+  gold_documents: [9113]
+  reference_answer: "Type=0x07."
+  expected_behaviour: answer
+
+- id: q029
+  query: "What is the hex identifier for the SETTINGS_QPACK_MAX_TABLE_CAPACITY setting, and what is its default value?"
+  category: identifier_lookup
+  difficulty: hard
+  gold_sections:
+    - {rfc: 9204, section: "5"}
+  gold_documents: [9204]
+  reference_answer: "0x01. The default value is zero."
+  expected_behaviour: answer
+
+- id: q030
+  query: "What error code value indicates QPACK_DECOMPRESSION_FAILED?"
+  category: identifier_lookup
+  difficulty: hard
+  gold_sections:
+    - {rfc: 9204, section: "6"}
+  gold_documents: [9204]
+  reference_answer: "0x0200."
+  expected_behaviour: answer
+
+- id: q031
+  query: "What frame type value identifies a HEADERS frame in HTTP/3?"
+  category: identifier_lookup
+  difficulty: hard
+  gold_sections:
+    - {rfc: 9114, section: "7.2.2"}
+  gold_documents: [9114]
+  reference_answer: "Type=0x01."
+  expected_behaviour: answer
+
 # ---------------------------------------------------------------------------
 # multi_section (8) — evidence genuinely needs two sections
 # ---------------------------------------------------------------------------
