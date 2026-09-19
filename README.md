@@ -192,8 +192,8 @@ validated.
 | Direct factual | 20 | Single-section answer. The floor: if this is weak, nothing else matters. | MVP |
 | Identifier lookup | 11 | Exact header name, status code, section or RFC number. The category that tests the lexical-retrieval hypothesis. Grown from an original 6 mid-MVP (`q027`-`q031`), because the first 6 already hit a perfect Recall@5 on C1 - a ceiling that would have left no way to tell whether C2 moves this category at all. | MVP |
 | Multi-section | 12 | Evidence in two or more sections, often across documents via a cross-reference. | MVP |
-| Superseded | 10 | Answerable from both an obsoleted and a current RFC, where only the current answer is correct. The trap in one direction: assume current unless told otherwise. | Phase 2 |
-| Explicit historical version | 6 | Names an old RFC directly (e.g. "In RFC 2616, how is chunked encoding framed?"), where the obsoleted document is the *correct* answer. The trap in the opposite direction: an over-eager validity filter must not suppress a version the user explicitly asked for. | Phase 2 |
+| Superseded | 5 (target 10) | Answerable from both an obsoleted and a current RFC, where only the current answer is correct. The trap in one direction: assume current unless told otherwise. First 5 written as matched pairs with Explicit historical version below (`q032`-`q036`), specifically to have real data once C3 existed to test them against. | Phase 2 |
+| Explicit historical version | 5 (target 6) | Names an old RFC directly (e.g. "In RFC 2616, how is chunked encoding framed?"), where the obsoleted document is the *correct* answer. The trap in the opposite direction: an over-eager validity filter must not suppress a version the user explicitly asked for. Mirrors the 5 Superseded pairs exactly (`q037`-`q041`), gold and distractor swapped. | Phase 2 |
 | Unanswerable | 8 | Plausible, on-topic, and genuinely not in the corpus. Correct behaviour is refusal. | Phase 2 |
 
 Recorded per query:
@@ -477,31 +477,58 @@ The tables the finished README must contain. Empty until measured.
 
 | Config | Recall@5 | Recall@10 | MRR@10 | Hit rate@5 | Stale evidence rate |
 |---|---:|---:|---:|---:|---:|
-| C0 | 0.6935 | 0.8387 | 0.4740 | 0.7097 | — |
-| C1 | **0.9032** | **0.9194** | **0.7043** | **0.9355** | — |
-| C2 | 0.9194 | 0.9355 | 0.7027 | 0.9355 | — |
-| C3 | 0.9194 | **0.9677** | **0.8105** | 0.9355 | — |
-| *D1 (diagnostic)* | 0.7097 | 0.8387 | 0.5320 | 0.8065 | — |
+| C0 | 0.6951 | 0.8293 | 0.4858 | 0.7073 | — |
+| C1 | 0.8293 | 0.9146 | 0.6260 | 0.8537 | — |
+| C2 | 0.8415 | 0.8780 | 0.6182 | 0.8537 | — |
+| C3 | **0.8902** | **0.9756** | **0.7364** | **0.9024** | — |
+| *D1 (diagnostic)* | 0.6098 | 0.7561 | 0.4451 | 0.6829 | — |
 
-C0/C1/C2/D1 measured on 31 of the ~65-query full set (`eval/queries.yaml`,
-direct_factual + identifier_lookup + multi_section only; superseded,
-explicit-version and unanswerable are phase 2). identifier_lookup was grown
-from 6 to 11 queries before this run specifically - see the note below the
-per-category table. Stale evidence rate needs C3's validity metadata wired
-into scoring to mean anything and is left blank until then, not computed as
-zero. These `n` are still small - read as a first, real signal, not a
-settled result; bootstrap confidence intervals are still owed per the
-Limitations section.
+Measured on all 41 written-so-far queries (`eval/queries.yaml`;
+`unanswerable` is still unwritten - it needs the generation step to be
+scoreable at all, see Roadmap). Stale evidence rate still needs a dedicated
+per-query computation, not yet wired into `run_eval.py` - left blank rather
+than computed as zero. `n` per category ranges from 5 to 12 - read every
+number here as a first, real signal, not a settled result; bootstrap
+confidence intervals are still owed per the Limitations section.
 
 **Retrieval by query category** (Recall@5)
 
 | Config | Direct factual | Identifier | Multi-section | Superseded | Explicit version |
 |---|---:|---:|---:|---:|---:|
-| C0 | 0.8333 | 0.5455 | 0.6875 | — | — |
-| C1 | **1.0000** | **0.9091** | **0.7500** | — | — |
-| C2 | 1.0000 | 0.9091 | **0.8125** | — | — |
-| C3 | 1.0000 | 0.9091 | 0.8125 | — | — |
-| *D1 (diagnostic)* | 0.8333 | 0.7273 | 0.5000 | — | — |
+| C0 | 0.8333 | 0.5455 | 0.6875 | 0.6000 | 0.8000 |
+| C1 | **1.0000** | 0.9091 | 0.7500 | 0.4000 | 0.8000 |
+| C2 | 1.0000 | 0.9091 | **0.8125** | 0.6000 | 0.6000 |
+| C3 | 1.0000 | 0.9091 | 0.8125 | **0.8000** | 0.8000 |
+| *D1 (diagnostic)* | 0.8333 | 0.7273 | 0.5000 | 0.4000 | 0.2000 |
+
+**This is the table the whole C3 design was built to answer.** The spec set
+the bar for it in advance: C3 has to raise Superseded *without* dragging
+Explicit version down, or it has only moved the problem, not solved it. What
+happened: C2's fusion had already, by accident, weakened Explicit version
+(0.8000 -> 0.6000) relative to C1 - fusing in BM25 apparently hurt the
+explicit-RFC-number queries as a side effect, with no mechanism built to
+protect them. C3 restores Explicit version to 0.8000 (matching C1, undoing
+C2's regression) *while also* raising Superseded from C2's 0.6000 to 0.8000.
+Both move the right way, at once - the explicit-RFC-number exemption
+(`mentioned_rfcs()`, a plain regex against the query text) is doing exactly
+the job it was written for: catch every explicit ask before the down-weight
+ever applies to it, rather than hoping a lucky score survives.
+
+D1 (BM25 alone) is worth a specific look on Explicit version: **0.2000, the
+single worst number in either table.** BM25 has no notion of "this query
+named an old RFC on purpose" at all - term-matching treats "RFC 2616" in the
+query as just more tokens to match, with no special handling, so it has no
+mechanism to prefer the explicitly-requested document the way the regex
+exemption does. This is a second, independent argument for why C3's
+exemption logic has to live in the retrieval/fusion layer rather than being
+left to hope a raw signal carries it - not just RRF's fusion regression
+(q028), but BM25 on its own has *no answer at all* to this query type.
+
+C1's Superseded score (0.4000) landing below C0's (0.6000) is a real,
+measured inversion worth flagging rather than smoothing over - with `n=5`
+this is one or two queries' worth of noise, not yet a claim that C0
+generalises better here. It is exactly the kind of number the eventual
+bootstrap confidence intervals exist to put a size on.
 
 C2's Identifier Recall@5 is identical to C1's (0.9091, not improved) despite
 adding BM25 - not because BM25 failed on this category (D1 alone is weaker
@@ -509,41 +536,24 @@ overall, 0.7273, but gets individual queries C1 misses) but because
 unweighted RRF can lose a hit either input found on its own; see the q028
 worked example in Error Analysis for the specific, measured mechanism.
 
-C3's Recall@5 is unchanged from C2 in every column - the validity filter
-only reorders candidates, it cannot pull a chunk into the top-5 that was not
-already a candidate. What it does move is rank *within* the list: q028
-(GOAWAY) goes from beyond rank 10 in C2 (MRR 0.0) to rank 8 in C3 (MRR
-0.125) - real progress, not visible in Recall@5 or Recall@10 at k=10 exactly
-because it now clears 10 but does not clear 5. This is the precise, expected
+C3's Recall@5 is unchanged from C2 on Identifier specifically - the validity
+filter only reorders candidates, it cannot pull a chunk into the top-5 that
+was not already a candidate. What it does move is rank *within* the list:
+q028 (GOAWAY) goes from beyond rank 10 in C2 (MRR 0.0) to rank 8 in C3 (MRR
+0.125) - real progress, not visible at k=5. This is the precise, expected
 boundary of what C3 was built to fix: it demoted the obsoleted RFC 7540
 competitor (stale evidence), which is why the query moved at all, but RFC
 9114's homonym GOAWAY was never obsoleted and so was never touched by this
 filter - the residual miss is now attributable specifically to the
-cross-document homonym, a different, undesigned-for failure mode. Overall
-MRR@10 rose from 0.7027 (C2) to 0.8105 - the filter's effect shows up mainly
-as rank improvement across many queries, not new hits at k=5.
-Multi-section is where C2 visibly helps (0.75 -> 0.8125).
+cross-document homonym, a different, undesigned-for failure mode.
 
-Superseded and Explicit version stay blank - phase 2 categories, not yet
-written. Identifier was reinforced from n=6 to n=11 *before* building C2: the
+Identifier itself was reinforced from n=6 to n=11 *before* building C2: the
 original six had already reached a perfect 1.0 Recall@5 on C1, a ceiling that
 would have left no way to tell whether C2 improves this category or simply
 can't move a number that's already maxed out. The five queries added
-(`q027`-`q031`) were picked blind to any C2 result, since C2 does not exist
+(`q027`-`q031`) were picked blind to any C2 result, since C2 did not exist
 yet - the same discipline as writing gold labels before inspecting retrieval
-output. Result: C1 is no longer saturated (0.9091, not 1.0) while the core
-finding survives intact - still far ahead of C0's 0.5455, purely from chunk
-boundaries that stop mixing unrelated facts into one embedding (see the q026
-worked example in Error Analysis). One of the five new queries, `q028`
-("What frame type identifies a GOAWAY frame in HTTP/2?", gold RFC 9113 §6.8),
-misses entirely in C1 - not present even in the top 10. It is the first
-concrete candidate to watch when C2 exists: GOAWAY is a rare, distinctive,
-all-caps token exactly the kind BM25's IDF term should reward.
-
-The **Explicit version** column is where C3's validity filter has to earn its
-keep: it needs Superseded to go up without dragging Explicit version down. A
-C3 that wins on the trap and loses on the counter-trap has not solved the
-problem, it has moved it.
+output.
 
 Unanswerable has no column here — there is no gold section to recall against a
 query with no answer in the corpus. It is scored on generation instead
