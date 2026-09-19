@@ -395,7 +395,25 @@ bar, "was actually in front of it" is.
 Faithfulness and correctness are kept apart on purpose. An answer can be
 perfectly faithful to a retrieved passage that is the wrong passage — that is
 precisely the superseded-document failure, and collapsing the two metrics would
-hide it.
+hide it. The two also diverge in the other direction, confirmed rather than
+hypothetical: q044's CORS answer (Error Analysis) is likely *correct* against
+general knowledge and is definitely *unfaithful* to the RFC 9112 section it
+cited, which discusses request-target syntax and nothing about CORS.
+
+**The judge, precisely.** Same model as generation (`llama3.1:8b`) - zero
+extra cost, at the price of a documented self-judging bias risk, which is
+exactly why judge-human agreement (below) is load-bearing here rather than
+optional. Output is deliberately not strict JSON: the generator already
+failed to hold an exact format under simple instructions once (the q028
+refusal-with-commentary case), so the judge is asked for one fixed first
+line (`VERDICT: correct` / `partially_correct` / `incorrect` for
+correctness; a repeated `CLAIM: ... / SUPPORTED: yes|no` pair per claim for
+faithfulness, or `NO_CLAIMS` for a refusal), parsed with a regex tolerant of
+whatever commentary follows. Faithfulness is scored as the fraction of
+extracted claims marked supported - `None`, not `0.0`, when there are no
+claims to check at all (a refusal, or an unparseable judge response),
+because "nothing failed" and "nothing was checked" are different claims and
+averaging them together would silently inflate the aggregate.
 
 ## Experiments
 
