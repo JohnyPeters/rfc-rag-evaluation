@@ -354,3 +354,148 @@
   gold_documents: [9110]
   reference_answer: "400 means the server perceives an error in the request itself (malformed syntax, invalid framing, deceptive routing). 404 means the request was understood but the origin server found no current representation for the target resource, or won't disclose that one exists."
   expected_behaviour: answer
+
+# ---------------------------------------------------------------------------
+# superseded (5) — answerable from both a current and an obsoleted RFC;
+# only the current answer is correct. No RFC number named in the query, so
+# the trap is exactly "assume current unless told otherwise". Built from five
+# topic pairs verified against the real corpus text on both sides - not
+# assumed to be near-duplicates, checked.
+# ---------------------------------------------------------------------------
+
+- id: q032
+  query: "What does the GOAWAY frame allow an HTTP/2 endpoint to do?"
+  category: superseded
+  difficulty: hard
+  gold_sections:
+    - {rfc: 9113, section: "6.8"}
+  gold_documents: [9113]
+  reference_answer: "Initiate shutdown of a connection (or signal a serious error condition), gracefully stopping acceptance of new streams while finishing in-flight ones."
+  expected_behaviour: answer
+  distractor_sections:
+    - {rfc: 7540, section: "6.8"}
+  notes: "RFC 7540 defines the same frame in nearly identical wording (even the same frame-type value, 0x07/0x7) - a near-duplicate obsoleted competitor, not a distractor invented for difficulty."
+
+- id: q033
+  query: "What ABNF extension does the HTTP semantics specification add for defining comma-separated lists?"
+  category: superseded
+  difficulty: hard
+  gold_sections:
+    - {rfc: 9110, section: "2.1"}
+  gold_documents: [9110]
+  reference_answer: "A list extension using a '#' operator, alongside the base ABNF notation from RFC 5234."
+  expected_behaviour: answer
+  distractor_sections:
+    - {rfc: 7230, section: "1.2"}
+  notes: "RFC 7230's Syntax Notation section describes essentially the same '#' list extension in near-identical wording."
+
+- id: q034
+  query: "How does chunked transfer coding structure the body of a message?"
+  category: superseded
+  difficulty: medium
+  gold_sections:
+    - {rfc: 9112, section: "7.1.3"}
+  gold_documents: [9112]
+  reference_answer: "As a series of chunks, each with its own size indicator, optionally followed by a trailer section."
+  expected_behaviour: answer
+  distractor_sections:
+    - {rfc: 2616, section: "3.6.1"}
+  notes: "RFC 2616 describes the same chunked-body structure; the current text is framed as a decoding algorithm rather than a definition, a smaller wording difference than the other pairs in this category."
+
+- id: q035
+  query: "What does the Last-Modified header field indicate, and what format is its value?"
+  category: superseded
+  difficulty: easy
+  gold_sections:
+    - {rfc: 9110, section: "8.8.2"}
+  gold_documents: [9110]
+  reference_answer: "A timestamp for when the origin server believes the representation was last modified. Its value is an HTTP-date."
+  expected_behaviour: answer
+  distractor_sections:
+    - {rfc: 2616, section: "14.29"}
+  notes: "RFC 2616's definition is nearly word-for-word the same, including the HTTP-date format."
+
+- id: q036
+  query: "What header field tells a client how long to wait before retrying, and what two formats can its value take?"
+  category: superseded
+  difficulty: medium
+  gold_sections:
+    - {rfc: 9110, section: "10.2.3"}
+  gold_documents: [9110]
+  reference_answer: "Retry-After. Its value is either an HTTP-date or a number of delay-seconds."
+  expected_behaviour: answer
+  distractor_sections:
+    - {rfc: 2616, section: "14.37"}
+  notes: "The same query used earlier in this file's schema documentation (q017's original, now-fixed slot) - kept here as the actual superseded-category instance it always should have been, now with a verified distractor."
+
+# ---------------------------------------------------------------------------
+# explicit_historical_version (5) — mirrors the five superseded pairs above,
+# same topics, but the query names the old RFC on purpose. Gold and
+# distractor are swapped relative to the matching superseded query: the
+# obsoleted section is now correct, and the current one must not override it.
+# ---------------------------------------------------------------------------
+
+- id: q037
+  query: "In RFC 7540, what does the GOAWAY frame allow an HTTP/2 endpoint to do?"
+  category: explicit_historical_version
+  difficulty: hard
+  gold_sections:
+    - {rfc: 7540, section: "6.8"}
+  gold_documents: [7540]
+  reference_answer: "Initiate shutdown of a connection (or signal a serious error condition), gracefully stopping acceptance of new streams while finishing in-flight ones."
+  expected_behaviour: answer
+  distractor_sections:
+    - {rfc: 9113, section: "6.8"}
+  notes: "Mirrors q032. A validity filter tuned only to prefer current-by-default must not suppress RFC 7540 here, since the query names it explicitly."
+
+- id: q038
+  query: "In RFC 7230, what ABNF extension does the specification add for defining comma-separated lists?"
+  category: explicit_historical_version
+  difficulty: hard
+  gold_sections:
+    - {rfc: 7230, section: "1.2"}
+  gold_documents: [7230]
+  reference_answer: "A list extension using a '#' operator, alongside the base ABNF notation from RFC 5234."
+  expected_behaviour: answer
+  distractor_sections:
+    - {rfc: 9110, section: "2.1"}
+  notes: "Mirrors q033."
+
+- id: q039
+  query: "In RFC 2616, how does chunked transfer coding structure the body of a message?"
+  category: explicit_historical_version
+  difficulty: medium
+  gold_sections:
+    - {rfc: 2616, section: "3.6.1"}
+  gold_documents: [2616]
+  reference_answer: "As a series of chunks, each with its own size indicator, followed by an optional trailer containing entity-header fields."
+  expected_behaviour: answer
+  distractor_sections:
+    - {rfc: 9112, section: "7.1.3"}
+  notes: "Mirrors q034."
+
+- id: q040
+  query: "In RFC 2616, what does the Last-Modified header field indicate, and what format is its value?"
+  category: explicit_historical_version
+  difficulty: easy
+  gold_sections:
+    - {rfc: 2616, section: "14.29"}
+  gold_documents: [2616]
+  reference_answer: "The date and time at which the origin server believes the variant was last modified. Its value is an HTTP-date."
+  expected_behaviour: answer
+  distractor_sections:
+    - {rfc: 9110, section: "8.8.2"}
+  notes: "Mirrors q035."
+
+- id: q041
+  query: "In RFC 2616, what header field tells a client how long to wait before retrying, and what two formats can its value take?"
+  category: explicit_historical_version
+  difficulty: medium
+  gold_sections:
+    - {rfc: 2616, section: "14.37"}
+  gold_documents: [2616]
+  reference_answer: "Retry-After. Its value is either an HTTP-date or a number of seconds to delay."
+  expected_behaviour: answer
+  distractor_sections:
+    - {rfc: 9110, section: "10.2.3"}
+  notes: "Mirrors q036."
