@@ -31,6 +31,37 @@ def _load_queries(path: Path) -> list[dict[str, Any]]:
     return queries
 
 
+def retrieve_chunks(
+    strategy: str,
+    query: str,
+    k: int = 10,
+    *,
+    root: Path | None = None,
+) -> list[dict[str, Any]]:
+    """Retrieve ranked chunks using the configured strategy dispatch."""
+    valid_strategies = (*STRATEGIES, "hybrid_c2", "bm25_d1", "validity_c3")
+    if strategy not in valid_strategies:
+        raise ValueError(f"strategy must be one of {valid_strategies}, got {strategy!r}")
+    project_root = root or _project_root()
+    data_dir = project_root / "data"
+    if strategy in STRATEGIES:
+        results = dense_search(strategy, query, k=k, data_dir=data_dir)
+    elif strategy == "hybrid_c2":
+        results = hybrid_search.search(query, k=k, data_dir=data_dir)
+    elif strategy == "bm25_d1":
+        results = bm25_search.search(query, k=k, data_dir=data_dir)
+    else:
+        results = validity_search.search(query, k=k, data_dir=data_dir)
+
+    chunk_strategy = (
+        "section_aware"
+        if strategy in {"hybrid_c2", "bm25_d1", "validity_c3"}
+        else strategy
+    )
+    chunks = load_chunks(chunk_strategy, data_dir)
+    return [chunks[index] for index, _ in results]
+
+
 def evaluate(strategy: str, *, root: Path | None = None) -> dict[str, Any]:
     """Evaluate one retrieval strategy and return per-query and aggregate scores."""
     valid_strategies = (*STRATEGIES, "hybrid_c2", "bm25_d1", "validity_c3")
@@ -38,13 +69,6 @@ def evaluate(strategy: str, *, root: Path | None = None) -> dict[str, Any]:
         raise ValueError(f"strategy must be one of {valid_strategies}, got {strategy!r}")
     project_root = root or _project_root()
     queries = _load_queries(project_root / "eval" / "queries.yaml")
-    chunk_strategy = (
-        "section_aware"
-        if strategy in {"hybrid_c2", "bm25_d1", "validity_c3"}
-        else strategy
-    )
-    chunks = load_chunks(chunk_strategy, project_root / "data")
-
     per_query: list[dict[str, Any]] = []
     skipped_queries = 0
     for query in queries:
@@ -52,23 +76,9 @@ def evaluate(strategy: str, *, root: Path | None = None) -> dict[str, Any]:
         if not gold_sections:
             skipped_queries += 1
             continue
-        if strategy in STRATEGIES:
-            results = dense_search(
-                strategy, str(query["query"]), k=10, data_dir=project_root / "data"
-            )
-        elif strategy == "hybrid_c2":
-            results = hybrid_search.search(
-                str(query["query"]), k=10, data_dir=project_root / "data"
-            )
-        elif strategy == "bm25_d1":
-            results = bm25_search.search(
-                str(query["query"]), k=10, data_dir=project_root / "data"
-            )
-        else:
-            results = validity_search.search(
-                str(query["query"]), k=10, data_dir=project_root / "data"
-            )
-        retrieved = [chunks[index] for index, _ in results]
+        retrieved = retrieve_chunks(
+            strategy, str(query["query"]), k=10, root=project_root
+        )
         per_query.append(
             {
                 "id": query["id"],

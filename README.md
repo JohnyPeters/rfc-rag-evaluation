@@ -623,7 +623,16 @@ has no row in the generation or latency tables below.
 | C0 | — | — | — | — | — | — | — |
 | C1 | — | — | — | — | — | — | — |
 | C2 | — | — | — | — | — | — | — |
-| C3 | — | — | — | — | — | — | — |
+| C3 | — | — | 0.9878 | 0.8211 | 0.7500 | **0.0000** | — |
+
+C3 only so far, `k=10`, `llama3.1:8b`, 49 queries. Answer correctness and
+faithfulness stay genuinely blank until the LLM-as-judge exists (planned
+last, per the Generation Evaluation section above) - citation validity is a
+weaker, cheaper proxy and is not a substitute for either. **False refusal is
+0.0000 across all 41 answerable queries** - the model never declined a
+question it had a real answer for. Refusal on unanswerable is 0.75 (6/8) -
+the two misses are worked examples below, and are two different kinds of
+failure, not the same one twice.
 
 **Latency and cost**
 
@@ -652,6 +661,8 @@ interview, and it cannot be automated.
 | Cross-document homonym | Two *unrelated* documents (siblings, not one superseding the other) happen to share a term, code or name; distinct from stale evidence, which is specifically about currency between versions of the same thing. |
 | Hallucination despite correct context | Correct evidence present; answer still wrong. A generation failure, not a retrieval one. |
 | Unsupported but answered | Out-of-corpus question answered instead of refused. |
+| Citation laundering | The answer draws on outside knowledge but attaches a citation to a real, genuinely-supplied section whose content does not actually support the claim - passes `citation_validity` (the section was in context) while still being a hallucination. Distinct from "hallucination despite correct context", where the cited section *is* the right one and the model still gets it wrong; here the section is wrong but present, which validity-checking alone cannot see. |
+| Near-miss scope, not fabrication | A genuinely retrieved, genuinely accurate citation answers an adjacent question, not the one asked (e.g. a TLS parameter confused with a similarly-named but different one). Not a hallucination and not a retrieval bug - a precision gap in what the query itself was verified against, worth fixing in the eval set rather than the system. |
 | Ambiguous query | The query admits more than one reasonable reading, and the gold label picked one. An evaluation-set defect, to be recorded rather than quietly fixed. |
 
 Counts per category, per configuration, with two or three worked examples
@@ -735,6 +746,36 @@ reproduced in full.
   the planned k-sensitivity check (Roadmap) - `k=5` and `k=10` gave
   different *correctness*, not just different recall numbers, on the exact
   same query.
+- **Citation laundering — q044** ("What headers does a browser send in a
+  CORS preflight request?", `unanswerable`). The model answered with a
+  textbook-accurate CORS header list (`Origin`, `Access-Control-Request-Method`,
+  `Access-Control-Request-Headers`) - clearly outside knowledge, since CORS
+  does not exist anywhere in this corpus - and cited `RFC 9112 §3.2.1` for
+  it. That section is genuinely in the corpus and was genuinely in this
+  call's context, so `citation_validity` scores it 1.0 - but its actual
+  content is the `origin-form` request-target syntax, unrelated to CORS
+  entirely. `citation_validity` checks membership (was this section
+  supplied), not support (does this section's content back the claim), and
+  a hallucination with a real citation attached passes the first check
+  while failing the second. This is the concrete, measured reason
+  `faithfulness` has to be a separate metric rather than a cheaper stand-in
+  for it - a metric this project has not implemented yet, and precisely the
+  kind of failure it would exist to catch.
+- **Near-miss scope, not fabrication — q042** ("What is the maximum
+  recommended TLS certificate key size for HTTP/2 servers?", `unanswerable`).
+  The model answered "RFC 9113 §9.2.1 states that clients MUST accept DHE
+  sizes of up to 4096 bits" - and that section genuinely says exactly that.
+  The failure is narrower than it looks: DHE key size (an ephemeral
+  key-exchange parameter) is not the same thing as a certificate's own key
+  size, and the model conflated two adjacent TLS parameters rather than
+  fabricating anything. This is a defect in how this query was verified, not
+  in the model or the retrieval: absence was checked by grepping for
+  "certificate key size" (zero matches, confirmed at the time), but that
+  check does not rule out a *semantically adjacent* real parameter existing
+  under different wording - exactly what TLS key-size terminology has. The
+  lesson generalises beyond this one query: verifying a topic's absence by
+  keyword takes real, if unlikely, risk of missing a confusable neighbour a
+  keyword search cannot see.
 
 ## Latency and Cost
 

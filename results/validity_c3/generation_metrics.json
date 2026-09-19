@@ -1,0 +1,1250 @@
+{
+  "per_query": [
+    {
+      "id": "q001",
+      "category": "direct_factual",
+      "expected_behaviour": "answer",
+      "outcome": "answered",
+      "is_refusal": false,
+      "citation_validity": {
+        "citations": [
+          [
+            9110,
+            "15.5.5"
+          ]
+        ],
+        "valid": [
+          [
+            9110,
+            "15.5.5"
+          ]
+        ],
+        "invalid": [],
+        "validity_rate": 1.0
+      },
+      "citation_relevance": 1.0,
+      "answer_text": "A 404 status code indicates that the origin server did not find a current representation for the target resource or is not willing to disclose that one exists. RFC 9110 \u00a715.5.5"
+    },
+    {
+      "id": "q002",
+      "category": "direct_factual",
+      "expected_behaviour": "answer",
+      "outcome": "answered",
+      "is_refusal": false,
+      "citation_validity": {
+        "citations": [
+          [
+            9110,
+            "15.6.4"
+          ]
+        ],
+        "valid": [
+          [
+            9110,
+            "15.6.4"
+          ]
+        ],
+        "invalid": [],
+        "validity_rate": 1.0
+      },
+      "citation_relevance": 1.0,
+      "answer_text": "A 503 response indicates that the server is currently unable to handle the request due to a temporary overload or scheduled maintenance, which will likely be alleviated after some delay. The server MAY send a Retry-After header field to suggest an appropriate amount of time for the client to wait before retrying the request.\n\nRFC 9110 \u00a715.6.4"
+    },
+    {
+      "id": "q003",
+      "category": "direct_factual",
+      "expected_behaviour": "answer",
+      "outcome": "answered",
+      "is_refusal": false,
+      "citation_validity": {
+        "citations": [
+          [
+            9111,
+            "5.2.1.5"
+          ],
+          [
+            9111,
+            "5.2.2.5"
+          ]
+        ],
+        "valid": [
+          [
+            9111,
+            "5.2.1.5"
+          ],
+          [
+            9111,
+            "5.2.2.5"
+          ]
+        ],
+        "invalid": [],
+        "validity_rate": 1.0
+      },
+      "citation_relevance": 0.5,
+      "answer_text": "A cache MUST NOT store any part of either the immediate request or the response when a request or response carries the no-store directive. It MUST also make a best-effort attempt to remove the information from volatile storage as promptly as possible after forwarding it. \n\nRFC 9111 \u00a75.2.1.5, RFC 9111 \u00a75.2.2.5"
+    },
+    {
+      "id": "q004",
+      "category": "direct_factual",
+      "expected_behaviour": "answer",
+      "outcome": "answered",
+      "is_refusal": false,
+      "citation_validity": {
+        "citations": [
+          [
+            9113,
+            "5.2."
+          ],
+          [
+            9113,
+            "5.2"
+          ]
+        ],
+        "valid": [
+          [
+            9113,
+            "5.2"
+          ]
+        ],
+        "invalid": [
+          [
+            9113,
+            "5.2."
+          ]
+        ],
+        "validity_rate": 0.5
+      },
+      "citation_relevance": 0.5,
+      "answer_text": "Flow control in HTTP/2 ensures that streams on the same connection do not destructively interfere with each other, preventing blocked streams. This is stated in RFC 9113 \u00a75.2.\n\nRFC 9113 \u00a75.2 Flow Control"
+    },
+    {
+      "id": "q005",
+      "category": "direct_factual",
+      "expected_behaviour": "answer",
+      "outcome": "answered",
+      "is_refusal": false,
+      "citation_validity": {
+        "citations": [
+          [
+            7541,
+            "2.3"
+          ]
+        ],
+        "valid": [
+          [
+            7541,
+            "2.3"
+          ]
+        ],
+        "invalid": [],
+        "validity_rate": 1.0
+      },
+      "citation_relevance": 1.0,
+      "answer_text": "The two tables HPACK uses to associate header fields with indexes are the static table (see Section 2.3.1) and the dynamic table (see Section 2.3.2). RFC 7541 \u00a72.3"
+    },
+    {
+      "id": "q006",
+      "category": "direct_factual",
+      "expected_behaviour": "answer",
+      "outcome": "answered",
+      "is_refusal": false,
+      "citation_validity": {
+        "citations": [
+          [
+            9204,
+            "3.1"
+          ]
+        ],
+        "valid": [
+          [
+            9204,
+            "3.1"
+          ]
+        ],
+        "invalid": [],
+        "validity_rate": 1.0
+      },
+      "citation_relevance": 1.0,
+      "answer_text": "The QPACK static table starts indexing from 0. \n\nRFC 9204 \u00a73.1"
+    },
+    {
+      "id": "q007",
+      "category": "direct_factual",
+      "expected_behaviour": "answer",
+      "outcome": "answered",
+      "is_refusal": false,
+      "citation_validity": {
+        "citations": [
+          [
+            6265,
+            "4.1.2.5"
+          ]
+        ],
+        "valid": [
+          [
+            6265,
+            "4.1.2.5"
+          ]
+        ],
+        "invalid": [],
+        "validity_rate": 1.0
+      },
+      "citation_relevance": 1.0,
+      "answer_text": "The Secure attribute limits the scope of the cookie to \"secure\" channels (where \"secure\" is defined by the user agent). RFC 6265 \u00a74.1.2.5"
+    },
+    {
+      "id": "q008",
+      "category": "direct_factual",
+      "expected_behaviour": "answer",
+      "outcome": "answered",
+      "is_refusal": false,
+      "citation_validity": {
+        "citations": [
+          [
+            9110,
+            "8.4.1.3"
+          ],
+          [
+            9110,
+            "8.4.1.3"
+          ]
+        ],
+        "valid": [
+          [
+            9110,
+            "8.4.1.3"
+          ],
+          [
+            9110,
+            "8.4.1.3"
+          ]
+        ],
+        "invalid": [],
+        "validity_rate": 1.0
+      },
+      "citation_relevance": 1.0,
+      "answer_text": "The \"gzip\" coding is an LZ77 coding with a 32-bit Cyclic Redundancy Check (CRC) that is commonly produced by the gzip file compression program [RFC 9110 \u00a78.4.1.3]. A recipient SHOULD consider \"x-gzip\" to be equivalent to \"gzip\" [RFC 9110 \u00a78.4.1.3]."
+    },
+    {
+      "id": "q009",
+      "category": "direct_factual",
+      "expected_behaviour": "answer",
+      "outcome": "answered",
+      "is_refusal": false,
+      "citation_validity": {
+        "citations": [],
+        "valid": [],
+        "invalid": [],
+        "validity_rate": 1.0
+      },
+      "citation_relevance": 1.0,
+      "answer_text": "RFC 9111 deprecates the Pragma header field because support for Cache-Control is now widespread."
+    },
+    {
+      "id": "q010",
+      "category": "direct_factual",
+      "expected_behaviour": "answer",
+      "outcome": "answered",
+      "is_refusal": false,
+      "citation_validity": {
+        "citations": [
+          [
+            9113,
+            "8.6"
+          ]
+        ],
+        "valid": [
+          [
+            9113,
+            "8.6"
+          ]
+        ],
+        "invalid": [],
+        "validity_rate": 1.0
+      },
+      "citation_relevance": 1.0,
+      "answer_text": "No, HTTP/2 does not support the 101 (Switching Protocols) informational status code. RFC 9113 \u00a78.6 states: \"HTTP/2 does not support the 101 (Switching Protocols) informational status code (Section 15.2.2 of [HTTP]).\""
+    },
+    {
+      "id": "q011",
+      "category": "direct_factual",
+      "expected_behaviour": "answer",
+      "outcome": "answered",
+      "is_refusal": false,
+      "citation_validity": {
+        "citations": [
+          [
+            9110,
+            "17.15"
+          ]
+        ],
+        "valid": [
+          [
+            9110,
+            "17.15"
+          ]
+        ],
+        "invalid": [],
+        "validity_rate": 1.0
+      },
+      "citation_relevance": 1.0,
+      "answer_text": "Unconstrained multiple range requests are a denial-of-service concern because the effort required to request many overlapping ranges of the same data is tiny compared to the time, memory, and bandwidth consumed by attempting to serve the requested data in many parts. RFC 9110 \u00a717.15"
+    },
+    {
+      "id": "q012",
+      "category": "direct_factual",
+      "expected_behaviour": "answer",
+      "outcome": "answered",
+      "is_refusal": false,
+      "citation_validity": {
+        "citations": [
+          [
+            6265,
+            "4.1.2.6"
+          ]
+        ],
+        "valid": [
+          [
+            6265,
+            "4.1.2.6"
+          ]
+        ],
+        "invalid": [],
+        "validity_rate": 1.0
+      },
+      "citation_relevance": 1.0,
+      "answer_text": "The HttpOnly attribute limits the scope of the cookie to HTTP requests, instructing the user agent to omit the cookie when providing access to cookies via \"non-HTTP\" APIs. It is independent of the Secure attribute, and a cookie can have both attributes. RFC 6265 \u00a74.1.2.6"
+    },
+    {
+      "id": "q013",
+      "category": "identifier_lookup",
+      "expected_behaviour": "answer",
+      "outcome": "answered",
+      "is_refusal": false,
+      "citation_validity": {
+        "citations": [
+          [
+            9110,
+            "15.5.22"
+          ]
+        ],
+        "valid": [
+          [
+            9110,
+            "15.5.22"
+          ]
+        ],
+        "invalid": [],
+        "validity_rate": 1.0
+      },
+      "citation_relevance": 1.0,
+      "answer_text": "426 (Upgrade Required) RFC 9110 \u00a715.5.22"
+    },
+    {
+      "id": "q014",
+      "category": "identifier_lookup",
+      "expected_behaviour": "answer",
+      "outcome": "answered",
+      "is_refusal": false,
+      "citation_validity": {
+        "citations": [
+          [
+            9110,
+            "11.7.2"
+          ]
+        ],
+        "valid": [
+          [
+            9110,
+            "11.7.2"
+          ]
+        ],
+        "invalid": [],
+        "validity_rate": 1.0
+      },
+      "citation_relevance": 1.0,
+      "answer_text": "Proxy-Authorization. \n\nRFC 9110 \u00a711.7.2"
+    },
+    {
+      "id": "q015",
+      "category": "identifier_lookup",
+      "expected_behaviour": "answer",
+      "outcome": "answered",
+      "is_refusal": false,
+      "citation_validity": {
+        "citations": [
+          [
+            9110,
+            "8.8.2"
+          ]
+        ],
+        "valid": [
+          [
+            9110,
+            "8.8.2"
+          ]
+        ],
+        "invalid": [],
+        "validity_rate": 1.0
+      },
+      "citation_relevance": 1.0,
+      "answer_text": "The \"Last-Modified\" header field carries the timestamp of when a representation was last modified. \n\nRFC 9110 \u00a78.8.2"
+    },
+    {
+      "id": "q016",
+      "category": "identifier_lookup",
+      "expected_behaviour": "answer",
+      "outcome": "answered",
+      "is_refusal": false,
+      "citation_validity": {
+        "citations": [
+          [
+            9113,
+            "4.1"
+          ]
+        ],
+        "valid": [
+          [
+            9113,
+            "4.1"
+          ]
+        ],
+        "invalid": [],
+        "validity_rate": 1.0
+      },
+      "citation_relevance": 0.0,
+      "answer_text": "0x04 (RFC 9113 \u00a74.1)"
+    },
+    {
+      "id": "q017",
+      "category": "identifier_lookup",
+      "expected_behaviour": "answer",
+      "outcome": "answered",
+      "is_refusal": false,
+      "citation_validity": {
+        "citations": [
+          [
+            9110,
+            "15.5.1"
+          ]
+        ],
+        "valid": [
+          [
+            9110,
+            "15.5.1"
+          ]
+        ],
+        "invalid": [],
+        "validity_rate": 1.0
+      },
+      "citation_relevance": 1.0,
+      "answer_text": "400 (Bad Request) RFC 9110 \u00a715.5.1"
+    },
+    {
+      "id": "q018",
+      "category": "identifier_lookup",
+      "expected_behaviour": "answer",
+      "outcome": "answered",
+      "is_refusal": false,
+      "citation_validity": {
+        "citations": [
+          [
+            9114,
+            "7.2"
+          ]
+        ],
+        "valid": [
+          [
+            9114,
+            "7.2"
+          ]
+        ],
+        "invalid": [],
+        "validity_rate": 1.0
+      },
+      "citation_relevance": 0.0,
+      "answer_text": "0x00 (RFC 9114 \u00a77.2)"
+    },
+    {
+      "id": "q027",
+      "category": "identifier_lookup",
+      "expected_behaviour": "answer",
+      "outcome": "answered",
+      "is_refusal": false,
+      "citation_validity": {
+        "citations": [
+          [
+            9113,
+            "6.9"
+          ]
+        ],
+        "valid": [
+          [
+            9113,
+            "6.9"
+          ]
+        ],
+        "invalid": [],
+        "validity_rate": 1.0
+      },
+      "citation_relevance": 1.0,
+      "answer_text": "The frame type value that identifies a WINDOW_UPDATE frame in HTTP/2 is 0x08. \n\nRFC 9113 \u00a76.9"
+    },
+    {
+      "id": "q028",
+      "category": "identifier_lookup",
+      "expected_behaviour": "answer",
+      "outcome": "answered",
+      "is_refusal": false,
+      "citation_validity": {
+        "citations": [
+          [
+            9113,
+            "6.8"
+          ]
+        ],
+        "valid": [
+          [
+            9113,
+            "6.8"
+          ]
+        ],
+        "invalid": [],
+        "validity_rate": 1.0
+      },
+      "citation_relevance": 1.0,
+      "answer_text": "0x07 (RFC 9113 \u00a76.8)"
+    },
+    {
+      "id": "q029",
+      "category": "identifier_lookup",
+      "expected_behaviour": "answer",
+      "outcome": "answered",
+      "is_refusal": false,
+      "citation_validity": {
+        "citations": [
+          [
+            9204,
+            "5"
+          ],
+          [
+            9204,
+            "5"
+          ]
+        ],
+        "valid": [
+          [
+            9204,
+            "5"
+          ],
+          [
+            9204,
+            "5"
+          ]
+        ],
+        "invalid": [],
+        "validity_rate": 1.0
+      },
+      "citation_relevance": 1.0,
+      "answer_text": "The hex identifier for the SETTINGS_QPACK_MAX_TABLE_CAPACITY setting is 0x01 (RFC 9204 \u00a75). The default value is zero (RFC 9204 \u00a75)."
+    },
+    {
+      "id": "q030",
+      "category": "identifier_lookup",
+      "expected_behaviour": "answer",
+      "outcome": "answered",
+      "is_refusal": false,
+      "citation_validity": {
+        "citations": [
+          [
+            9204,
+            "6"
+          ]
+        ],
+        "valid": [
+          [
+            9204,
+            "6"
+          ]
+        ],
+        "invalid": [],
+        "validity_rate": 1.0
+      },
+      "citation_relevance": 1.0,
+      "answer_text": "0x0200 (RFC 9204 \u00a76)"
+    },
+    {
+      "id": "q031",
+      "category": "identifier_lookup",
+      "expected_behaviour": "answer",
+      "outcome": "answered",
+      "is_refusal": false,
+      "citation_validity": {
+        "citations": [
+          [
+            9114,
+            "7.2.2"
+          ]
+        ],
+        "valid": [
+          [
+            9114,
+            "7.2.2"
+          ]
+        ],
+        "invalid": [],
+        "validity_rate": 1.0
+      },
+      "citation_relevance": 1.0,
+      "answer_text": "0x01 (RFC 9114 \u00a77.2.2)"
+    },
+    {
+      "id": "q019",
+      "category": "multi_section",
+      "expected_behaviour": "answer",
+      "outcome": "answered",
+      "is_refusal": false,
+      "citation_validity": {
+        "citations": [
+          [
+            9111,
+            "5.2.1.1"
+          ],
+          [
+            9111,
+            "5.2.2.1"
+          ]
+        ],
+        "valid": [
+          [
+            9111,
+            "5.2.1.1"
+          ],
+          [
+            9111,
+            "5.2.2.1"
+          ]
+        ],
+        "invalid": [],
+        "validity_rate": 1.0
+      },
+      "citation_relevance": 1.0,
+      "answer_text": "When the max-age directive appears in a request, it indicates that the client prefers a response whose age is less than or equal to the specified number of seconds, and unless the max-stale request directive is also present, the client does not wish to receive a stale response (RFC 9111 \u00a75.2.1.1).\n\nWhen the max-age directive appears in a response, it indicates that the response is to be considered stale after its age is greater than the specified number of seconds (RFC 9111 \u00a75.2.2.1)."
+    },
+    {
+      "id": "q020",
+      "category": "multi_section",
+      "expected_behaviour": "answer",
+      "outcome": "answered",
+      "is_refusal": false,
+      "citation_validity": {
+        "citations": [
+          [
+            9114,
+            "5"
+          ],
+          [
+            9114,
+            "5"
+          ],
+          [
+            9114,
+            "5"
+          ]
+        ],
+        "valid": [
+          [
+            9114,
+            "5"
+          ],
+          [
+            9114,
+            "5"
+          ],
+          [
+            9114,
+            "5"
+          ]
+        ],
+        "invalid": [],
+        "validity_rate": 1.0
+      },
+      "citation_relevance": 0.0,
+      "answer_text": "An HTTP/3 connection can end in two distinct ways: \n\n1. Abrupt closure initiated by the transport, as described in RFC 9114 \u00a75 Connection Closure. \n2. Graceful closure initiated by the application, also described in RFC 9114 \u00a75 Connection Closure.\n\nThe abrupt closure initiated by the transport does not allow the application to complete any remaining tasks, whereas the graceful closure initiated by the application allows the application to complete any necessary remaining tasks. \n\nRFC 9114 \u00a75 Connection Closure."
+    },
+    {
+      "id": "q021",
+      "category": "multi_section",
+      "expected_behaviour": "answer",
+      "outcome": "answered",
+      "is_refusal": false,
+      "citation_validity": {
+        "citations": [
+          [
+            9110,
+            "9.2.2"
+          ]
+        ],
+        "valid": [
+          [
+            9110,
+            "9.2.2"
+          ]
+        ],
+        "invalid": [],
+        "validity_rate": 1.0
+      },
+      "citation_relevance": 1.0,
+      "answer_text": "A client can safely retry a request automatically after a connection closes if the request has an idempotent method. Idempotent methods include GET, PUT, and DELETE. \n\nRFC 9110 \u00a79.2.2"
+    },
+    {
+      "id": "q022",
+      "category": "multi_section",
+      "expected_behaviour": "answer",
+      "outcome": "answered",
+      "is_refusal": false,
+      "citation_validity": {
+        "citations": [
+          [
+            9113,
+            "5.2.3"
+          ]
+        ],
+        "valid": [
+          [
+            9113,
+            "5.2.3"
+          ]
+        ],
+        "invalid": [],
+        "validity_rate": 1.0
+      },
+      "citation_relevance": 1.0,
+      "answer_text": "If an endpoint cannot ensure that its peer always has available flow-control window space that is greater than the peer's bandwidth * delay product on this connection, its receive throughput will be limited by HTTP/2 flow control. This will result in degraded performance. \n\nRFC 9113 \u00a75.2.3"
+    },
+    {
+      "id": "q023",
+      "category": "multi_section",
+      "expected_behaviour": "answer",
+      "outcome": "answered",
+      "is_refusal": false,
+      "citation_validity": {
+        "citations": [
+          [
+            7541,
+            "4.1"
+          ]
+        ],
+        "valid": [
+          [
+            7541,
+            "4.1"
+          ]
+        ],
+        "invalid": [],
+        "validity_rate": 1.0
+      },
+      "citation_relevance": 1.0,
+      "answer_text": "The size of an entry in HPACK's dynamic table is calculated as the sum of its name's length in octets, its value's length in octets, and 32. RFC 7541 \u00a74.1"
+    },
+    {
+      "id": "q024",
+      "category": "multi_section",
+      "expected_behaviour": "answer",
+      "outcome": "answered",
+      "is_refusal": false,
+      "citation_validity": {
+        "citations": [
+          [
+            9204,
+            "3.1"
+          ],
+          [
+            9204,
+            "3.2"
+          ],
+          [
+            9204,
+            "2.1"
+          ]
+        ],
+        "valid": [
+          [
+            9204,
+            "3.1"
+          ],
+          [
+            9204,
+            "3.2"
+          ],
+          [
+            9204,
+            "2.1"
+          ]
+        ],
+        "invalid": [],
+        "validity_rate": 1.0
+      },
+      "citation_relevance": 0.6666666666666666,
+      "answer_text": "The static table has a predefined list of field lines, each with a fixed index over time, and its entries are defined in Appendix A. The dynamic table, on the other hand, is a list of field lines maintained in first-in, first-out order, and its entries can be added or removed dynamically.\n\nThe static table's entries are identified by a unique index, and all entries in the static table have a name and a value, with values being able to be empty. The dynamic table's entries, however, are identified by an absolute index, which is a unique index for each entry in the dynamic table, and are relative to a base.\n\nThe static table's entries persist over time, whereas the dynamic table's entries can be evicted when the dynamic table capacity is reduced. \n\nRFC 9204 \u00a73.1, RFC 9204 \u00a73.2, RFC 9204 \u00a72.1"
+    },
+    {
+      "id": "q025",
+      "category": "multi_section",
+      "expected_behaviour": "answer",
+      "outcome": "answered",
+      "is_refusal": false,
+      "citation_validity": {
+        "citations": [
+          [
+            6265,
+            "4.1.2.5"
+          ],
+          [
+            6265,
+            "4.1.2.6"
+          ],
+          [
+            6265,
+            "4.1.2.6"
+          ]
+        ],
+        "valid": [
+          [
+            6265,
+            "4.1.2.5"
+          ],
+          [
+            6265,
+            "4.1.2.6"
+          ],
+          [
+            6265,
+            "4.1.2.6"
+          ]
+        ],
+        "invalid": [],
+        "validity_rate": 1.0
+      },
+      "citation_relevance": 1.0,
+      "answer_text": "The Secure attribute restricts a cookie's scope to \"secure\" channels (typically HTTP over Transport Layer Security (TLS) [RFC2818]), where \"secure\" is defined by the user agent (RFC 6265 \u00a74.1.2.5).\n\nThe HttpOnly attribute restricts a cookie's scope to HTTP requests, instructing the user agent to omit the cookie when providing access to cookies via \"non-HTTP\" APIs (RFC 6265 \u00a74.1.2.6).\n\nThe two attributes are independent of each other (RFC 6265 \u00a74.1.2.6)."
+    },
+    {
+      "id": "q026",
+      "category": "multi_section",
+      "expected_behaviour": "answer",
+      "outcome": "answered",
+      "is_refusal": false,
+      "citation_validity": {
+        "citations": [
+          [
+            9110,
+            "15.5.1"
+          ],
+          [
+            9110,
+            "15.5.5"
+          ]
+        ],
+        "valid": [
+          [
+            9110,
+            "15.5.1"
+          ],
+          [
+            9110,
+            "15.5.5"
+          ]
+        ],
+        "invalid": [],
+        "validity_rate": 1.0
+      },
+      "citation_relevance": 1.0,
+      "answer_text": "According to RFC 9110 \u00a715.5.1, a 400 (Bad Request) status code indicates that the server cannot or will not process the request due to something that is perceived to be a client error, such as malformed request syntax, invalid request message framing, or deceptive request routing.\n\nAccording to RFC 9110 \u00a715.5.5, a 404 (Not Found) status code indicates that the origin server did not find a current representation for the target resource or is not willing to disclose that one exists.\n\nThe key difference between the two is that 400 indicates a problem with the request itself, while 404 indicates that the requested resource does not exist."
+    },
+    {
+      "id": "q032",
+      "category": "superseded",
+      "expected_behaviour": "answer",
+      "outcome": "answered",
+      "is_refusal": false,
+      "citation_validity": {
+        "citations": [],
+        "valid": [],
+        "invalid": [],
+        "validity_rate": 1.0
+      },
+      "citation_relevance": 1.0,
+      "answer_text": "The GOAWAY frame allows an endpoint to stop accepting new requests or pushes while still finishing processing of previously received requests and pushes."
+    },
+    {
+      "id": "q033",
+      "category": "superseded",
+      "expected_behaviour": "answer",
+      "outcome": "answered",
+      "is_refusal": false,
+      "citation_validity": {
+        "citations": [
+          [
+            9110,
+            "5.6"
+          ],
+          [
+            9110,
+            "5.6.1"
+          ]
+        ],
+        "valid": [
+          [
+            9110,
+            "5.6"
+          ],
+          [
+            9110,
+            "5.6.1"
+          ]
+        ],
+        "invalid": [],
+        "validity_rate": 1.0
+      },
+      "citation_relevance": 0.0,
+      "answer_text": "The HTTP semantics specification adds the #rule extension to the ABNF rules of [RFC5234] for defining comma-separated lists. \n\nRFC 9110 \u00a75.6 / RFC 9110 \u00a75.6.1"
+    },
+    {
+      "id": "q034",
+      "category": "superseded",
+      "expected_behaviour": "answer",
+      "outcome": "answered",
+      "is_refusal": false,
+      "citation_validity": {
+        "citations": [
+          [
+            9112,
+            "7.1"
+          ]
+        ],
+        "valid": [
+          [
+            9112,
+            "7.1"
+          ]
+        ],
+        "invalid": [],
+        "validity_rate": 1.0
+      },
+      "citation_relevance": 0.0,
+      "answer_text": "The chunked transfer coding structures the body of a message as a series of chunks, each with its own size indicator, followed by an OPTIONAL trailer section containing trailer fields. The structure is as follows:\n\nchunked-body = *chunk last-chunk trailer-section CRLF\n\nchunk = chunk-size [ chunk-ext ] CRLF chunk-data CRLF\nchunk-size = 1*HEXDIG\nlast-chunk = 1*(\"0\") [ chunk-ext ] CRLF\nchunk-data = 1*OCTET; a sequence of chunk-size octets\n\nRFC 9112 \u00a77.1"
+    },
+    {
+      "id": "q035",
+      "category": "superseded",
+      "expected_behaviour": "answer",
+      "outcome": "answered",
+      "is_refusal": false,
+      "citation_validity": {
+        "citations": [
+          [
+            9110,
+            "8.8.2"
+          ]
+        ],
+        "valid": [
+          [
+            9110,
+            "8.8.2"
+          ]
+        ],
+        "invalid": [],
+        "validity_rate": 1.0
+      },
+      "citation_relevance": 1.0,
+      "answer_text": "The \"Last-Modified\" header field indicates the date and time at which the origin server believes the selected representation was last modified, as determined at the conclusion of handling the request. Its value is in the format of an HTTP-date. \n\nRFC 9110 \u00a78.8.2"
+    },
+    {
+      "id": "q036",
+      "category": "superseded",
+      "expected_behaviour": "answer",
+      "outcome": "answered",
+      "is_refusal": false,
+      "citation_validity": {
+        "citations": [
+          [
+            9110,
+            "10.2.3"
+          ]
+        ],
+        "valid": [
+          [
+            9110,
+            "10.2.3"
+          ]
+        ],
+        "invalid": [],
+        "validity_rate": 1.0
+      },
+      "citation_relevance": 1.0,
+      "answer_text": "The \"Retry-After\" header field tells a client how long to wait before retrying. Its value can be either an HTTP-date or a number of seconds to delay after receiving the response. \n\nRFC 9110 \u00a710.2.3"
+    },
+    {
+      "id": "q037",
+      "category": "explicit_historical_version",
+      "expected_behaviour": "answer",
+      "outcome": "answered",
+      "is_refusal": false,
+      "citation_validity": {
+        "citations": [
+          [
+            7540,
+            "6.8"
+          ]
+        ],
+        "valid": [
+          [
+            7540,
+            "6.8"
+          ]
+        ],
+        "invalid": [],
+        "validity_rate": 1.0
+      },
+      "citation_relevance": 1.0,
+      "answer_text": "Initiate shutdown of a connection or to signal serious error conditions. GOAWAY allows an endpoint to gracefully stop accepting new streams while still finishing processing of previously established streams. This enables administrative actions, like server maintenance. \n\nRFC 7540 \u00a76.8"
+    },
+    {
+      "id": "q038",
+      "category": "explicit_historical_version",
+      "expected_behaviour": "answer",
+      "outcome": "answered",
+      "is_refusal": false,
+      "citation_validity": {
+        "citations": [
+          [
+            7230,
+            "7"
+          ]
+        ],
+        "valid": [
+          [
+            7230,
+            "7"
+          ]
+        ],
+        "invalid": [],
+        "validity_rate": 1.0
+      },
+      "citation_relevance": 0.0,
+      "answer_text": "The specification adds the #rule extension to the ABNF rules of [RFC5234] for defining comma-separated lists. RFC 7230 \u00a77 [OBSOLETED - see RFC 9110, RFC 9112 instead]."
+    },
+    {
+      "id": "q039",
+      "category": "explicit_historical_version",
+      "expected_behaviour": "answer",
+      "outcome": "answered",
+      "is_refusal": false,
+      "citation_validity": {
+        "citations": [
+          [
+            2616,
+            "3.6.1"
+          ]
+        ],
+        "valid": [
+          [
+            2616,
+            "3.6.1"
+          ]
+        ],
+        "invalid": [],
+        "validity_rate": 1.0
+      },
+      "citation_relevance": 1.0,
+      "answer_text": "The chunked transfer coding modifies the body of a message in order to transfer it as a series of chunks, each with its own size indicator, followed by an OPTIONAL trailer containing entity-header fields. This allows dynamically produced content to be transferred along with the information necessary for the recipient to verify that it has received the full message.\n\nChunked-Body = *chunk last-chunk trailer CRLF\n\nchunk = chunk-size [ chunk-extension ] CRLF chunk-data CRLF\nchunk-size = 1*HEX\nlast-chunk = 1*(\"0\") [ chunk-extension ] CRLF\n\nRFC 2616 \u00a73.6.1 [OBSOLETED - see RFC 7230, RFC 7231, RFC 7232, RFC 7233, RFC 7234, RFC 7235 instead]"
+    },
+    {
+      "id": "q040",
+      "category": "explicit_historical_version",
+      "expected_behaviour": "answer",
+      "outcome": "answered",
+      "is_refusal": false,
+      "citation_validity": {
+        "citations": [
+          [
+            2616,
+            "14.29"
+          ]
+        ],
+        "valid": [
+          [
+            2616,
+            "14.29"
+          ]
+        ],
+        "invalid": [],
+        "validity_rate": 1.0
+      },
+      "citation_relevance": 1.0,
+      "answer_text": "The Last-Modified entity-header field indicates the date and time at which the origin server believes the variant was last modified. The value of the Last-Modified header field is in the format of an HTTP-date. \n\nRFC 2616 \u00a714.29"
+    },
+    {
+      "id": "q041",
+      "category": "explicit_historical_version",
+      "expected_behaviour": "answer",
+      "outcome": "answered",
+      "is_refusal": false,
+      "citation_validity": {
+        "citations": [
+          [
+            2616,
+            "14.37"
+          ]
+        ],
+        "valid": [
+          [
+            2616,
+            "14.37"
+          ]
+        ],
+        "invalid": [],
+        "validity_rate": 1.0
+      },
+      "citation_relevance": 1.0,
+      "answer_text": "The Retry-After response-header field tells a client how long to wait before retrying. Its value can be either an HTTP-date or an integer number of seconds (in decimal) after the time of the response. \n\nRFC 2616 \u00a714.37"
+    },
+    {
+      "id": "q042",
+      "category": "unanswerable",
+      "expected_behaviour": "refuse",
+      "outcome": "unsupported_but_answered",
+      "is_refusal": false,
+      "answer_text": "RFC 9113 \u00a79.2.1 states that clients MUST accept DHE sizes of up to 4096 bits."
+    },
+    {
+      "id": "q043",
+      "category": "unanswerable",
+      "expected_behaviour": "refuse",
+      "outcome": "correct_refusal",
+      "is_refusal": true,
+      "answer_text": "I don't have enough information in the provided context to answer this question."
+    },
+    {
+      "id": "q044",
+      "category": "unanswerable",
+      "expected_behaviour": "refuse",
+      "outcome": "unsupported_but_answered",
+      "is_refusal": false,
+      "answer_text": "A browser sends the following headers in a CORS preflight request:\n\n* OPTIONS / HTTP/1.1\n* Host: <origin server's hostname>\n* Origin: <origin>\n* Access-Control-Request-Method: <method>\n* Access-Control-Request-Headers: <headers>\n\n[RFC 9112 \u00a73.2.1]"
+    },
+    {
+      "id": "q045",
+      "category": "unanswerable",
+      "expected_behaviour": "refuse",
+      "outcome": "correct_refusal",
+      "is_refusal": true,
+      "answer_text": "I don't have enough information in the provided context to answer this question."
+    },
+    {
+      "id": "q046",
+      "category": "unanswerable",
+      "expected_behaviour": "refuse",
+      "outcome": "correct_refusal",
+      "is_refusal": true,
+      "answer_text": "I don't have enough information in the provided context to answer this question."
+    },
+    {
+      "id": "q047",
+      "category": "unanswerable",
+      "expected_behaviour": "refuse",
+      "outcome": "correct_refusal",
+      "is_refusal": true,
+      "answer_text": "I don't have enough information in the provided context to answer this question."
+    },
+    {
+      "id": "q048",
+      "category": "unanswerable",
+      "expected_behaviour": "refuse",
+      "outcome": "correct_refusal",
+      "is_refusal": true,
+      "answer_text": "I don't have enough information in the provided context to answer this question."
+    },
+    {
+      "id": "q049",
+      "category": "unanswerable",
+      "expected_behaviour": "refuse",
+      "outcome": "correct_refusal",
+      "is_refusal": true,
+      "answer_text": "I don't have enough information in the provided context to answer this question."
+    }
+  ],
+  "aggregate": {
+    "n_total": 49,
+    "n_refuse_expected": 8,
+    "n_answer_expected": 41,
+    "refusal_rate": 0.75,
+    "unsupported_but_answered_rate": 0.25,
+    "false_refusal_rate": 0.0,
+    "mean_citation_validity": 0.9878048780487805,
+    "mean_citation_relevance": 0.8211382113821137
+  },
+  "aggregate_by_category": {
+    "direct_factual": {
+      "n_total": 12,
+      "n_refuse_expected": 0,
+      "n_answer_expected": 12,
+      "refusal_rate": null,
+      "unsupported_but_answered_rate": null,
+      "false_refusal_rate": 0.0,
+      "mean_citation_validity": 0.9583333333333334,
+      "mean_citation_relevance": 0.9166666666666666
+    },
+    "explicit_historical_version": {
+      "n_total": 5,
+      "n_refuse_expected": 0,
+      "n_answer_expected": 5,
+      "refusal_rate": null,
+      "unsupported_but_answered_rate": null,
+      "false_refusal_rate": 0.0,
+      "mean_citation_validity": 1.0,
+      "mean_citation_relevance": 0.8
+    },
+    "identifier_lookup": {
+      "n_total": 11,
+      "n_refuse_expected": 0,
+      "n_answer_expected": 11,
+      "refusal_rate": null,
+      "unsupported_but_answered_rate": null,
+      "false_refusal_rate": 0.0,
+      "mean_citation_validity": 1.0,
+      "mean_citation_relevance": 0.8181818181818182
+    },
+    "multi_section": {
+      "n_total": 8,
+      "n_refuse_expected": 0,
+      "n_answer_expected": 8,
+      "refusal_rate": null,
+      "unsupported_but_answered_rate": null,
+      "false_refusal_rate": 0.0,
+      "mean_citation_validity": 1.0,
+      "mean_citation_relevance": 0.8333333333333334
+    },
+    "superseded": {
+      "n_total": 5,
+      "n_refuse_expected": 0,
+      "n_answer_expected": 5,
+      "refusal_rate": null,
+      "unsupported_but_answered_rate": null,
+      "false_refusal_rate": 0.0,
+      "mean_citation_validity": 1.0,
+      "mean_citation_relevance": 0.6
+    },
+    "unanswerable": {
+      "n_total": 8,
+      "n_refuse_expected": 8,
+      "n_answer_expected": 0,
+      "refusal_rate": 0.75,
+      "unsupported_but_answered_rate": 0.25,
+      "false_refusal_rate": null,
+      "mean_citation_validity": null,
+      "mean_citation_relevance": null
+    }
+  }
+}
