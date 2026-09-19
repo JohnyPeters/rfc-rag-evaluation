@@ -353,14 +353,32 @@ You are a technical assistant answering questions about HTTP protocol specificat
 Rules, follow them strictly:
 1. Answer using only the information in the provided context. Do not use any outside knowledge, even if you are confident it is correct.
 2. Every factual claim must be followed by a citation in exactly this format: RFC <number> §<section>. Use one citation per claim, referencing the excerpt it came from.
-3. If the provided context does not contain enough information to answer the question, respond with exactly this sentence and nothing else: "I don't have enough information in the provided context to answer this question."
-4. Be concise. Do not repeat the question or add unrequested commentary.
+3. Some excerpts are marked [OBSOLETED - see RFC <n> instead]. When an excerpt without that mark covers the same point, prefer it. Use an OBSOLETED excerpt anyway only if the question explicitly names that exact RFC number.
+4. If the provided context does not contain enough information to answer the question, respond with exactly this sentence and nothing else: "I don't have enough information in the provided context to answer this question."
+5. Be concise. Do not repeat the question or add unrequested commentary.
 ```
 
 Context is assembled as one labelled block per retrieved chunk —
 `[RFC <n> §<section>]` followed by its text, chunks separated by a blank
 line — so the model always has, right next to the text, the exact citation
 string it is asked to reproduce.
+
+**The validity tag is a second, independent line of defence, not a
+replacement for C3.** C3's filter already decides current-vs-obsoleted at
+retrieval time, before generation ever sees a candidate — if it works, the
+obsoleted chunk never reaches the model at all, and there is nothing left to
+decide. The tag exists for the case where it doesn't fully work: too few
+non-penalised candidates to fill `k`, so an obsoleted chunk still reaches
+generation. Without the tag, the model has no way to tell current from
+obsoleted from the text alone — that gap *is* this project's premise, since
+the wording reads nearly identically across eras. Applying the tag
+identically in every configuration keeps it from confounding the C0-C3
+comparison: it changes absolute generation quality everywhere at once, never
+the relative ranking the ladder is built to measure. The explicit-RFC
+exception in rule 3 exists for the same reason `validity_filter.py`'s regex
+exemption exists on the retrieval side: an obsoleted tag must not defeat the
+*explicit historical version* category twice, once at retrieval and again at
+generation.
 
 **Refusal detection is an exact string match against that fixed sentence**,
 not a fuzzy "sounds like a refusal" classifier. If the model declines in
