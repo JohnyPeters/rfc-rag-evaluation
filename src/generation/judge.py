@@ -83,9 +83,17 @@ def parse_faithfulness(judge_output: str) -> dict:
     faithfulness_score is None (not 0.0 or 1.0) when there were no claims to
     check at all - "nothing was unsupported" is not the same claim as
     "nothing was checked", and conflating them would silently inflate the
-    aggregate with vacuous cases."""
-    if "NO_CLAIMS" in judge_output:
-        return {"n_claims": 0, "n_supported": 0, "faithfulness_score": None}
+    aggregate with vacuous cases.
+
+    Real CLAIM/SUPPORTED pairs are checked FIRST, before falling back to the
+    NO_CLAIMS case - not the other way around. A bug that checked for the
+    literal string "NO_CLAIMS" anywhere in the output before looking for
+    real pairs was caught in production: llama3.1:8b sometimes appends a
+    stray "NO_CLAIMS" line after already listing genuine claims (observed on
+    q001, 17 real pairs followed by a spurious trailing NO_CLAIMS), and that
+    ordering was discarding every genuine judgement whenever it happened -
+    responsible for most of a ~29% "unparseable" rate on the first real run.
+    """
     verdicts = [v.lower() for v in _SUPPORTED_RE.findall(judge_output)]
     if not verdicts:
         return {"n_claims": 0, "n_supported": 0, "faithfulness_score": None}
