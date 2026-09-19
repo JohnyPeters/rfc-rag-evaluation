@@ -44,6 +44,21 @@ def test_parse_faithfulness_catches_the_q044_citation_laundering_case():
     assert result["faithfulness_score"] == 0.0
 
 
+def test_parse_faithfulness_ignores_a_trailing_spurious_no_claims():
+    # The real q001 case: 17 genuine CLAIM/SUPPORTED pairs, then llama3.1:8b
+    # appended a stray "NO_CLAIMS" anyway. Real pairs must win, not be
+    # discarded because the literal string NO_CLAIMS also appears somewhere.
+    output = (
+        "CLAIM: A 404 status code is defined in RFC 9110.\nSUPPORTED: yes\n"
+        "CLAIM: A 404 response is cacheable by default.\nSUPPORTED: no\n"
+        "NO_CLAIMS"
+    )
+    result = parse_faithfulness(output)
+    assert result["n_claims"] == 2
+    assert result["n_supported"] == 1
+    assert result["faithfulness_score"] == 0.5
+
+
 def test_parse_faithfulness_on_a_fully_supported_answer():
     output = "CLAIM: Retry-After can be an HTTP-date\nSUPPORTED: yes\nCLAIM: Retry-After can be delay-seconds\nSUPPORTED: yes"
     result = parse_faithfulness(output)
