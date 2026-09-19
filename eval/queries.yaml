@@ -520,7 +520,16 @@
   gold_documents: []
   reference_answer: null
   expected_behaviour: refuse
-  notes: "Verified live: llama3.1:8b correctly refused with the exact fixed sentence on the first real generation test of this project."
+  notes: "At k=5 (the first-ever generation test of this project), llama3.1:8b
+    correctly refused. At k=10 (the batch run), it answered instead, citing
+    RFC 9113 §9.2.1's genuine statement about DHE key sizes - a real,
+    adjacent TLS parameter, not the certificate key size actually asked
+    about. Not a fabrication and not a retrieval bug: a precision gap in how
+    this query was verified (grepping for 'certificate key size' does not
+    rule out a confusable neighbouring parameter existing under different
+    wording). See README.md Error Analysis, 'Near-miss scope, not
+    fabrication'. Kept as-is rather than reworded, since it is now also a
+    genuine k-sensitivity example."
 
 - id: q043
   query: "What algorithm computes the Sec-WebSocket-Key value during a WebSocket handshake?"
