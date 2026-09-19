@@ -499,3 +499,95 @@
   distractor_sections:
     - {rfc: 9110, section: "10.2.3"}
   notes: "Mirrors q036."
+
+# ---------------------------------------------------------------------------
+# unanswerable (8) — plausible, on-topic, genuinely absent from the corpus.
+# Each topic verified by grepping all 16 raw RFC texts (data/raw/*.txt)
+# before being written here: either zero matches, or matches that are only
+# passing references (e.g. an Upgrade-header example naming "websocket"),
+# never an actual definition of the thing being asked about. No gold_sections
+# field - there is nothing to recall. expected_behaviour is the only thing
+# scored here (generation-side: does the system refuse, per
+# src/generation/citations.py's is_refusal(), rather than answer from
+# outside knowledge).
+# ---------------------------------------------------------------------------
+
+- id: q042
+  query: "What is the maximum recommended TLS certificate key size for HTTP/2 servers according to this specification?"
+  category: unanswerable
+  difficulty: medium
+  gold_sections: []
+  gold_documents: []
+  reference_answer: null
+  expected_behaviour: refuse
+  notes: "Verified live: llama3.1:8b correctly refused with the exact fixed sentence on the first real generation test of this project."
+
+- id: q043
+  query: "What algorithm computes the Sec-WebSocket-Key value during a WebSocket handshake?"
+  category: unanswerable
+  difficulty: medium
+  gold_sections: []
+  gold_documents: []
+  reference_answer: null
+  expected_behaviour: refuse
+  notes: "'websocket' appears in the corpus only inside Upgrade-header examples (RFC 9110) and a bibliography entry (RFC 9113) - never a handshake definition. That protocol is RFC 6455, not part of this corpus."
+
+- id: q044
+  query: "What headers does a browser send in a CORS preflight request?"
+  category: unanswerable
+  difficulty: easy
+  gold_sections: []
+  gold_documents: []
+  reference_answer: null
+  expected_behaviour: refuse
+  notes: "'CORS' / 'Cross-Origin' / 'preflight' - zero matches anywhere in the corpus."
+
+- id: q045
+  query: "What is the exact format of an OAuth 2.0 Bearer token in an Authorization header?"
+  category: unanswerable
+  difficulty: easy
+  gold_sections: []
+  gold_documents: []
+  reference_answer: null
+  expected_behaviour: refuse
+  notes: "'OAuth' / 'Bearer' - zero matches. RFC 9110 defines the Authorization header's general syntax but not this specific scheme (RFC 6750)."
+
+- id: q046
+  query: "What does the 226 IM Used status code indicate?"
+  category: unanswerable
+  difficulty: medium
+  gold_sections: []
+  gold_documents: []
+  reference_answer: null
+  expected_behaviour: refuse
+  notes: "Defined in RFC 3229, not part of this corpus. 'IM Used' - zero matches; a plausible-looking status code neighbouring the ones actually in RFC 9110 §15."
+
+- id: q047
+  query: "What congestion control algorithm does QUIC use for HTTP/3, and what are its parameters?"
+  category: unanswerable
+  difficulty: hard
+  gold_sections: []
+  gold_documents: []
+  reference_answer: null
+  expected_behaviour: refuse
+  notes: "RFC 9114 mentions 'congestion control' only in passing (TCP not sharing it across connections) - the actual algorithm lives in the QUIC transport RFCs, not this corpus."
+
+- id: q048
+  query: "What is the exact request-line syntax used by HTTP/0.9?"
+  category: unanswerable
+  difficulty: medium
+  gold_sections: []
+  gold_documents: []
+  reference_answer: null
+  expected_behaviour: refuse
+  notes: "HTTP/0.9 is named four times, always as brief historical context (e.g. 'these protocols were eventually defined as HTTP/0.9') - never with its own syntax defined."
+
+- id: q049
+  query: "What framing conventions does gRPC use when running over HTTP/2?"
+  category: unanswerable
+  difficulty: medium
+  gold_sections: []
+  gold_documents: []
+  reference_answer: null
+  expected_behaviour: refuse
+  notes: "'grpc' - zero matches anywhere in the corpus, despite HTTP/2 (RFC 9113) being extensively covered."
