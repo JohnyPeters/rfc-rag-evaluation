@@ -338,6 +338,42 @@ agreement is poor, the judged numbers are reported as indicative and the
 objective metrics carry the conclusions. A judge whose agreement is never
 measured is an unvalidated instrument.
 
+**The generation model: local, via Ollama** (`llama3.1:8b`), not a paid API —
+free, and the exact model file can be pinned for reproducibility, at the cost
+of somewhat weaker generation quality than a hosted frontier model. Since
+`Latency and Cost` tracks token spend only when a paid API is in use, this
+path is documented by hardware and wall-clock instead (see that section).
+
+**The prompt, verbatim** (fixed across every configuration — see the table
+above on why):
+
+```
+You are a technical assistant answering questions about HTTP protocol specifications using ONLY the excerpts provided below.
+
+Rules, follow them strictly:
+1. Answer using only the information in the provided context. Do not use any outside knowledge, even if you are confident it is correct.
+2. Every factual claim must be followed by a citation in exactly this format: RFC <number> §<section>. Use one citation per claim, referencing the excerpt it came from.
+3. If the provided context does not contain enough information to answer the question, respond with exactly this sentence and nothing else: "I don't have enough information in the provided context to answer this question."
+4. Be concise. Do not repeat the question or add unrequested commentary.
+```
+
+Context is assembled as one labelled block per retrieved chunk —
+`[RFC <n> §<section>]` followed by its text, chunks separated by a blank
+line — so the model always has, right next to the text, the exact citation
+string it is asked to reproduce.
+
+**Refusal detection is an exact string match against that fixed sentence**,
+not a fuzzy "sounds like a refusal" classifier. If the model declines in
+different words, that is scored as a prompt-following failure, not credited
+as a correct refusal — a looser check would let inconsistent refusal phrasing
+quietly pass as success.
+
+**Citation validity is checked against what a specific call actually
+supplied, never against the corpus at large.** A citation to a real, correctly-
+formatted, genuinely-existing section the model was never shown for that
+call is still a fabrication and scores as invalid — "sounds right" is not the
+bar, "was actually in front of it" is.
+
 Faithfulness and correctness are kept apart on purpose. An answer can be
 perfectly faithful to a retrieved passage that is the wrong passage — that is
 precisely the superseded-document failure, and collapsing the two metrics would
