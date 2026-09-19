@@ -46,7 +46,12 @@ def evaluate(strategy: str, *, root: Path | None = None) -> dict[str, Any]:
     chunks = load_chunks(chunk_strategy, project_root / "data")
 
     per_query: list[dict[str, Any]] = []
+    skipped_queries = 0
     for query in queries:
+        gold_sections = query["gold_sections"]
+        if not gold_sections:
+            skipped_queries += 1
+            continue
         if strategy in STRATEGIES:
             results = dense_search(
                 strategy, str(query["query"]), k=10, data_dir=project_root / "data"
@@ -64,7 +69,6 @@ def evaluate(strategy: str, *, root: Path | None = None) -> dict[str, Any]:
                 str(query["query"]), k=10, data_dir=project_root / "data"
             )
         retrieved = [chunks[index] for index, _ in results]
-        gold_sections = query["gold_sections"]
         per_query.append(
             {
                 "id": query["id"],
@@ -86,7 +90,11 @@ def evaluate(strategy: str, *, root: Path | None = None) -> dict[str, Any]:
         }
         for row in per_query
     ]
-    return {"per_query": per_query, "aggregate": aggregate(aggregate_rows)}
+    return {
+        "per_query": per_query,
+        "aggregate": aggregate(aggregate_rows),
+        "skipped_queries": skipped_queries,
+    }
 
 
 def _print_aggregate(scores: dict[str, Any]) -> None:
@@ -113,6 +121,7 @@ def _print_aggregate(scores: dict[str, Any]) -> None:
                 ]
             )
         )
+    print(f"Skipped queries with empty gold_sections: {scores['skipped_queries']}")
 
 
 def main() -> None:

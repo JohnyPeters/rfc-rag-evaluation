@@ -714,6 +714,28 @@ reproduced in full.
   separated from the stale-evidence portion C3 already fixed - exactly the
   boundary the filter was designed to have, not a shortfall in it.
 
+  **Resolution under generation, with a real k-sensitivity finding along the
+  way.** At C3's own `k=5`, RFC 9113 (rank 8) still isn't in the context
+  handed to generation at all - the model was tested anyway with `k=5` on
+  C2 first, where the context held only the homonym (9114) and the
+  obsoleted competitor (7540). It correctly noticed the OBSOLETED tag on
+  7540 and hesitated to answer from it - but then broke the exact-refusal
+  format by appending its own explanatory note, which the strict string
+  match correctly scores as a prompt-following failure, not a valid
+  refusal (llama3.1:8b, run locally, is noticeably less reliable at exact
+  literal formatting than a larger model would be - a real, measured cost
+  of the local-model choice). Widening to C3's `k=10` puts RFC 9113 in the
+  context alongside the others, and generation answers cleanly: `"0x07
+  (RFC 9113 §6.8)"`, citation validity and relevance both 1.0 - correctly
+  ignoring the homonym and the (still-present, still-tagged) obsoleted
+  chunk. The full pipeline resolves what no single layer did alone,
+  precisely because each layer's job was scoped narrowly: C3 gets the
+  right answer *into range*, the validity tag helps generation *choose it*
+  once it's there. This is also the first concrete, measured argument for
+  the planned k-sensitivity check (Roadmap) - `k=5` and `k=10` gave
+  different *correctness*, not just different recall numbers, on the exact
+  same query.
+
 ## Latency and Cost
 
 Measured per stage, not just end-to-end, because the whole trade-off argument
