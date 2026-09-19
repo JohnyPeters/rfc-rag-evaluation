@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import json
 import time
+from functools import lru_cache
 from pathlib import Path
 from typing import Any
 
@@ -55,6 +56,7 @@ def load_chunks(strategy: str, data_dir: Path | None = None) -> list[dict[str, A
     return chunks
 
 
+@lru_cache(maxsize=1)
 def _load_model() -> Any:
     try:
         from sentence_transformers import SentenceTransformer
