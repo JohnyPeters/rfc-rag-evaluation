@@ -641,16 +641,28 @@ has no row in the generation or latency tables below.
 | C0 | — | — | — | — | — | — | — |
 | C1 | — | — | — | — | — | — | — |
 | C2 | — | — | — | — | — | — | — |
-| C3 | — | — | 0.9878 | 0.8211 | 0.7500 | **0.0000** | — |
+| C3 | 0.8537 | 0.8527 | 0.9878 | 0.8211 | 0.7500 | **0.0000** | — |
 
-C3 only so far, `k=10`, `llama3.1:8b`, 49 queries. Answer correctness and
-faithfulness stay genuinely blank until the LLM-as-judge exists (planned
-last, per the Generation Evaluation section above) - citation validity is a
-weaker, cheaper proxy and is not a substitute for either. **False refusal is
-0.0000 across all 41 answerable queries** - the model never declined a
-question it had a real answer for. Refusal on unanswerable is 0.75 (6/8) -
-the two misses are worked examples below, and are two different kinds of
-failure, not the same one twice.
+C3 only so far, `k=10`, `llama3.1:8b` as both generator and judge, 49
+queries. **False refusal is 0.0000 across all 41 answerable queries** - the
+model never declined a question it had a real answer for. Refusal on
+unanswerable is 0.75 (6/8) - the two misses are worked examples in Error
+Analysis, and are two different kinds of failure, not the same one twice.
+
+Answer correctness (0.8537) and faithfulness (0.8527) landing close together
+is a coincidence worth not over-reading with `n=41` and a same-model judge -
+they measure different things (see the Generation Evaluation section) and
+have no reason to track each other in general. The faithfulness number was
+caught and corrected once already: the first real run reported 12 of 41
+(~29%) as unparseable, traced to a real bug in `parse_faithfulness()` - it
+checked for the literal string `NO_CLAIMS` anywhere in the judge's output
+before checking for actual `CLAIM`/`SUPPORTED` pairs, so a judge response
+with 17 genuine, parseable claims (`q001`) was discarded whenever
+`llama3.1:8b` also appended a spurious trailing `NO_CLAIMS` after them, a
+real and apparently not-rare model quirk. Fixed to check for real pairs
+first; the corrected run has zero unparseable faithfulness judgements. The
+number reported here is the corrected one - the same discipline the rest of
+this project applies to its own results, applied to the judge itself.
 
 **Latency and cost**
 

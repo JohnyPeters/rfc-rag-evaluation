@@ -36,7 +36,7 @@ def _ollama_chat(model: str, user_message: str) -> str:
                 {"role": "system", "content": prompt.SYSTEM_PROMPT},
                 {"role": "user", "content": user_message},
             ],
-            options={"temperature": 0},
+            options={"temperature": 0, "num_predict": 800},
         )
     except Exception as exc:
         raise RuntimeError(
