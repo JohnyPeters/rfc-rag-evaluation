@@ -650,37 +650,37 @@ unanswerable is 0.75 (6/8) - the two misses are worked examples in Error
 Analysis, and are two different kinds of failure, not the same one twice.
 
 Citation validity (0.9390) and citation relevance (0.7724) were both
-corrected from an earlier, wrongly-inflated 0.9878/0.8211: `citation_validity`
+corrected from an earlier, wrongly-inflated 0.9878/0.8211. `citation_validity`
 and `citation_relevance` used to return a vacuous `1.0` for *any* answer with
 zero citations, including a substantive, non-refusal answer that simply
-failed to cite anything - the rule the prompt actually requires. Caught via
-`q032`, a correct-sounding GOAWAY answer with `"citations": []` that was
-silently scoring a perfect 1.0/1.0. Fixed to only award the vacuous `1.0`
-when the answer is a genuine refusal (nothing to be wrong about); a
+failed to cite anything, which is the rule the prompt actually requires.
+Caught via `q032`, a correct-sounding GOAWAY answer with `"citations": []`
+that was silently scoring a perfect 1.0/1.0. Fixed so the vacuous `1.0` only
+applies to a genuine refusal, where there is nothing to be wrong about; a
 substantive answer with no citations now scores `0.0` on both. Only two of
 41 answered queries (`q009`, `q032`) were affected, but the aggregate is
 reported here as the corrected value, not the original one.
 
 Answer correctness (1.0000) is the corrected number after fixing an
-ambiguity in `CORRECTNESS_PROMPT` (see "Judge-human agreement" below) - the
+ambiguity in `CORRECTNESS_PROMPT` (see "Judge-human agreement" below). The
 first run scored 0.8537, with several `partially_correct` verdicts that
 turned out, on human review, to be judge over-strictness rather than real
-answer defects (the judge was penalizing omission of report detail the
-question itself never asked for). **A `mean_correctness` of exactly 1.0
+answer defects: the judge was penalizing omission of reference detail the
+question itself never asked for. **A `mean_correctness` of exactly 1.0
 across all 41 queries is a strong claim, and this project's own discipline
-requires flagging it rather than reporting it flat**: only 20 of the 41 have
-an independent human label to check it against (see below); the other 21 are
-indicative, not verified. Faithfulness (0.8527) is unaffected by the prompt
-fix and unchanged from the previous run - it uses a separate prompt that
-was not touched. The faithfulness number itself was caught and corrected once
-already, independently: the first real run reported 12 of 41 (~29%) as
-unparseable, traced to a real bug in `parse_faithfulness()` - it checked for
-the literal string `NO_CLAIMS` anywhere in the judge's output before checking
-for actual `CLAIM`/`SUPPORTED` pairs, so a judge response with 17 genuine,
-parseable claims (`q001`) was discarded whenever `llama3.1:8b` also appended
-a spurious trailing `NO_CLAIMS` after them, a real and apparently not-rare
-model quirk. Fixed to check for real pairs first; the corrected run has zero
-unparseable faithfulness judgements.
+requires flagging it rather than reporting it flat.** Only 20 of the 41 have
+an independent human label to check it against (see below); the other 21
+stay indicative, not verified. Faithfulness (0.8527) is unaffected by the
+prompt fix and unchanged from the previous run, since it uses a separate
+prompt that was not touched. That faithfulness number was caught and
+corrected once already, independently: the first real run reported 12 of 41
+(~29%) as unparseable, traced to a real bug in `parse_faithfulness()`. It
+checked for the literal string `NO_CLAIMS` anywhere in the judge's output
+before checking for actual `CLAIM`/`SUPPORTED` pairs, so a judge response
+with 17 genuine, parseable claims (`q001`) was discarded whenever
+`llama3.1:8b` also appended a spurious trailing `NO_CLAIMS` after them, a
+real and apparently not-rare model quirk. Fixed to check for real pairs
+first; the corrected run has zero unparseable faithfulness judgements.
 
 **Judge-human agreement.** A stratified 20-query subsample
 (`eval/human_agreement_worksheet.md`) was independently labelled by hand for
@@ -694,25 +694,26 @@ both metrics and compared against the judge's verdicts on the same queries
 | Faithfulness (within ±0.2 of human's 0-1 fraction) | 13/20 (65%), MAE 0.156 | unaffected by the correctness fix |
 
 The first correctness run disagreed with the human label on 7/20 queries
-(`q003, q007, q009, q021, q023, q032, q036`), always in the same direction -
+(`q003, q007, q009, q021, q023, q032, q036`), always in the same direction:
 the judge marking `partially_correct` where the human marked `correct`,
-never the reverse. Reading the disagreements: the judge was penalizing
-generated answers for omitting supporting detail the *reference* answer
-happened to include but the *question* itself never asked for - not a
-factual error, a stricter reading of "complete" than a human grader applied.
-`CORRECTNESS_PROMPT` was amended to state explicitly that `partially_correct`
-applies only when the omission is something the question itself asked about.
-Re-running the judge with the amended prompt resolved every one of the 7
-disagreements (now 20/20), with the generation answers themselves unchanged
-(`temperature=0`, so re-generation was unnecessary - only the judge was
-re-run). Faithfulness agreement is unchanged at 65% (MAE 0.156, worst cases
-`q001`: human 1.0 vs judge 0.41, `q009`: 1.0 vs 0.57, `q030`: 1.0 vs 0.64) -
-this metric's prompt was not touched, and this gap is reported as a real,
-unresolved limitation of the LLM-judge for faithfulness specifically, not
-smoothed over by the correctness fix. **Conclusion:** correctness numbers
-above are now validated on the sampled 20/41 (100% agreement) and indicative
-on the rest; faithfulness numbers remain indicative throughout, per the
-self-judging-bias caveat already stated in `src/generation/judge.py`.
+never the reverse. Reading the disagreements showed why: the judge was
+penalizing generated answers for omitting supporting detail the *reference*
+answer happened to include but the *question* itself never asked for. Not a
+factual error, just a stricter reading of "complete" than a human grader
+applied. `CORRECTNESS_PROMPT` was amended to state explicitly that
+`partially_correct` applies only when the omission is something the question
+itself asked about. Re-running the judge with the amended prompt resolved
+every one of the 7 disagreements (now 20/20); the generation answers
+themselves were unchanged, since `temperature=0` made re-generation
+unnecessary and only the judge was re-run. Faithfulness agreement stays at
+65% (MAE 0.156, worst cases `q001`: human 1.0 vs judge 0.41, `q009`: 1.0 vs
+0.57, `q030`: 1.0 vs 0.64), because that metric's prompt was not touched.
+This gap is reported as a real, unresolved limitation of the LLM-judge for
+faithfulness specifically, not smoothed over by the correctness fix.
+**Conclusion:** correctness numbers above are now validated on the sampled
+20/41 (100% agreement) and indicative on the rest; faithfulness numbers
+remain indicative throughout, per the self-judging-bias caveat already
+stated in `src/generation/judge.py`.
 
 **Latency and cost**
 
@@ -724,20 +725,21 @@ Measured on 15 queries (`src/evaluation/measure_latency.py`), local Ollama
 `llama3.1:8b`, CPU. \*Retrieval's p95 is a single-sample artefact, not a real
 tail latency: the first query in the run pays a one-time cold start loading
 `bge-small-en-v1.5` from disk (13.87s), and every subsequent query in the
-same run is 0.1-0.26s - the same cost already diagnosed and fixed with
+same run lands at 0.1-0.26s. That cost was already diagnosed and fixed with
 `@lru_cache` in `dense_search._load_model()` for repeated calls within one
-process, but unavoidable on the very first call. Excluding that one outlier,
-retrieval's own p95 across the remaining 14 queries is ~0.26s.
+process, but it is unavoidable on the very first call. Excluding that one
+outlier, retrieval's own p95 across the remaining 14 queries is ~0.26s.
 
 **Generation dominates end-to-end latency by roughly two and a half orders of
-magnitude** over steady-state retrieval (66s vs 0.13s median) - the
+magnitude** over steady-state retrieval (66s vs 0.13s median). The
 chunking/retrieval design choices compared throughout this project have no
 practical effect on user-facing latency; the cost is entirely the local
 8B-parameter generation step. This is the actual answer to "what is the
-quality/latency trade-off here?": there isn't one, in this setup - C0 through
+quality/latency trade-off here?" There isn't one, in this setup: C0 through
 C3 differ in retrieval quality, not in speed, since retrieval is not the
-bottleneck. No `$` cost table is reported - this project runs entirely on a
-local model, not a metered API, so cost is latency and hardware, not billing.
+bottleneck. No `$` cost table is reported, because this project runs
+entirely on a local model rather than a metered API, so the honest unit is
+latency and hardware, not billing.
 
 **k-sensitivity.** The best configuration (C3) retrieved once at `k=20` per
 query and scored at every `k` in `{3, 5, 10, 15, 20}`
@@ -752,15 +754,15 @@ query and scored at every `k` in `{3, 5, 10, 15, 20}`
 | 15 | 0.9878 | 1.0000 |
 | 20 | 0.9878 | 1.0000 |
 
-The steepest gain is 5→10 (recall +0.0854), not 3→5 - `k=10` (this project's
-default throughout) is close to the point of diminishing returns, but not
+The steepest gain is 5→10 (recall +0.0854), not 3→5. `k=10` (this project's
+default throughout) sits close to the point of diminishing returns, but not
 past it: `explicit_historical_version` and `superseded` are still at 0.60
-recall at `k=3` and only reach 1.0 at `k=10`, meaning both categories rely on
-the wider `k` to surface the gold section past competing obsoleted or
-homonymous documents ranked ahead of it - consistent with the stale-evidence
-and cross-document-homonym failure modes described in Error Analysis.
-`multi_section` never reaches perfect recall even at `k=20` (0.9375) - the
-one category where widening `k` alone does not close the gap.
+recall at `k=3` and only reach 1.0 at `k=10`, meaning both categories rely
+on the wider `k` to surface the gold section past competing obsoleted or
+homonymous documents ranked ahead of it. That matches the stale-evidence and
+cross-document-homonym failure modes described in Error Analysis.
+`multi_section` never reaches perfect recall even at `k=20` (0.9375); it is
+the one category where widening `k` alone does not close the gap.
 
 Every table is to be generated from `results/` by a script, never typed by hand.
 
@@ -885,27 +887,27 @@ reproduced in full.
   SETTINGS frame in HTTP/2?"). The answer states `0x04` for SETTINGS, which is
   correct, and the gold section (`RFC 9113 §6.5.1`, which literally states
   "Type (8) = 0x04") was genuinely retrieved and present in the context, at
-  rank 2. But the model cited `§4.1` ("Frame Format") instead - a real,
-  present, but generic section that does not itself state the SETTINGS type
-  code. `citation_validity` scores this 1.0 (§4.1 really was supplied) and
-  the fact itself is right, so this failure is invisible to every metric
-  already implemented; it was only found by reading the answer against its
-  own context by hand. No outside knowledge was used (unlike citation
-  laundering) and no adjacent parameter was confused (unlike near-miss
-  scope) - the model simply named the wrong section for an otherwise
-  correct, well-supported claim.
+  rank 2. But the model cited `§4.1` ("Frame Format") instead, a real and
+  present but generic section that does not itself state the SETTINGS type
+  code. `citation_validity` scores this 1.0, because §4.1 really was
+  supplied, and the fact itself is right, so this failure is invisible to
+  every metric already implemented; it was only found by reading the answer
+  against its own context by hand. No outside knowledge was used (unlike
+  citation laundering) and no adjacent parameter was confused (unlike
+  near-miss scope). The model simply named the wrong section for an
+  otherwise correct, well-supported claim.
 - **Cross-document homonym recurs outside identifier_lookup — q032**
   ("What does the GOAWAY frame allow an HTTP/2 endpoint to do?",
   `superseded`). The same RFC 9114 (HTTP/3) GOAWAY homonym documented under
   `q028` above resurfaces here: 7 of the top-10 retrieved chunks are RFC 9114
   sections, for a question specifically about HTTP/2. The model's answer was
   factually accurate but, in the run that surfaced this query, cited nothing
-  at all - the real case that motivated the `citation_validity`/
+  at all. That is the real case that motivated the `citation_validity`/
   `citation_relevance` vacuous-1.0 fix documented under Generation results
-  above. Recorded here as confirmation that the homonym problem is a
-  property of the corpus (two unrelated protocols reusing the same frame
-  name and type byte), not a one-off tied to `q028`'s specific phrasing -
-  it appears in a different query category entirely.
+  above, and it is recorded here as confirmation that the homonym problem is
+  a property of the corpus (two unrelated protocols reusing the same frame
+  name and type byte), not a one-off tied to `q028`'s specific phrasing. It
+  shows up in a different query category entirely.
 - **Near-miss scope, not fabrication — q042** ("What is the maximum
   recommended TLS certificate key size for HTTP/2 servers?", `unanswerable`).
   The model answered "RFC 9113 §9.2.1 states that clients MUST accept DHE
@@ -932,16 +934,16 @@ cost" above, not duplicated here.
 
 The originally planned per-stage granularity (embedding vs. dense search vs.
 BM25/fusion vs. validity filtering as separate timings) was scoped down to
-two stages - retrieval (everything before the context is assembled) and
-generation - once the actual numbers showed generation dominating end-to-end
+two stages, retrieval (everything before the context is assembled) and
+generation, once the actual numbers showed generation dominating end-to-end
 latency by roughly two and a half orders of magnitude. Splitting retrieval's
 sub-millisecond-to-low-millisecond internals further would not have changed
-that conclusion, so it was not built. Only C3 was measured, not C0-C2: since
-retrieval time is not the bottleneck at any of these configurations, a
+that conclusion, so it was not built. Only C3 was measured, not C0-C2, since
+retrieval time is not the bottleneck at any of these configurations and a
 cross-config latency comparison would not tell a different story than the
 retrieval-quality tables already do.
 
-**Cost.** No `$`-priced cost table - this project runs entirely on a local
+**Cost.** No `$`-priced cost table: this project runs entirely on a local
 Ollama model (`llama3.1:8b`), not a metered API, so there is no per-token
 price to report. The real cost here is latency and local hardware time,
 which is what the measured table reports; an unpriced local run is not free,
