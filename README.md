@@ -5,12 +5,12 @@ as a measurement harness rather than a demo: every pipeline design decision is a
 named configuration, and every configuration is scored on retrieval and on
 generation separately.
 
-> **Status: MVP in progress.** Ingestion, chunking (C0 and C1), dense
-> retrieval, and the first real evaluation run (31 queries, retrieval metrics
-> only) exist and are measured — see the Retrieval tables below. Generation,
-> C2/C3, the full ~65-query set, latency/cost and every other table are still
-> planned, not implemented; their tables stay empty with `—` until measured,
-> and none of those numbers should be quoted yet.
+> **Status: complete and measured.** Ingestion, both chunking strategies,
+> dense/BM25/hybrid/validity-filtered retrieval (C0–C3, plus a BM25-only
+> diagnostic), generation with citation checking and refusal handling, and
+> an LLM-as-judge validated against human labels are all implemented and
+> scored on a 49-query set — see Metrics and Reporting below for the real
+> numbers. See Limitations for what this does and does not establish.
 
 ---
 
