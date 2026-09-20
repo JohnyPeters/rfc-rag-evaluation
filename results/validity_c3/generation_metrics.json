@@ -235,9 +235,9 @@
         "citations": [],
         "valid": [],
         "invalid": [],
-        "validity_rate": 1.0
+        "validity_rate": 0.0
       },
-      "citation_relevance": 1.0,
+      "citation_relevance": 0.0,
       "answer_text": "RFC 9111 deprecates the Pragma header field because support for Cache-Control is now widespread."
     },
     {
@@ -872,9 +872,9 @@
         "citations": [],
         "valid": [],
         "invalid": [],
-        "validity_rate": 1.0
+        "validity_rate": 0.0
       },
-      "citation_relevance": 1.0,
+      "citation_relevance": 0.0,
       "answer_text": "The GOAWAY frame allows an endpoint to stop accepting new requests or pushes while still finishing processing of previously received requests and pushes."
     },
     {
@@ -1182,8 +1182,8 @@
     "refusal_rate": 0.75,
     "unsupported_but_answered_rate": 0.25,
     "false_refusal_rate": 0.0,
-    "mean_citation_validity": 0.9878048780487805,
-    "mean_citation_relevance": 0.8211382113821137
+    "mean_citation_validity": 0.9390243902439024,
+    "mean_citation_relevance": 0.7723577235772358
   },
   "aggregate_by_category": {
     "direct_factual": {

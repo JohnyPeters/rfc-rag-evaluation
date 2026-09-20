@@ -1,0 +1,141 @@
+{
+  "per_query": [
+    {
+      "id": "q001",
+      "category": "direct_factual",
+      "retrieval_seconds": 13.867707700002939,
+      "generation_seconds": 65.45355710000149,
+      "end_to_end_seconds": 79.32126480000443,
+      "answer_token_count": 176
+    },
+    {
+      "id": "q002",
+      "category": "direct_factual",
+      "retrieval_seconds": 0.18248969997512177,
+      "generation_seconds": 74.90733940000064,
+      "end_to_end_seconds": 75.08982909997576,
+      "answer_token_count": 344
+    },
+    {
+      "id": "q003",
+      "category": "direct_factual",
+      "retrieval_seconds": 0.13838530000066385,
+      "generation_seconds": 87.52651150000747,
+      "end_to_end_seconds": 87.66489680000814,
+      "answer_token_count": 310
+    },
+    {
+      "id": "q004",
+      "category": "direct_factual",
+      "retrieval_seconds": 0.10823539999546483,
+      "generation_seconds": 67.78057209998951,
+      "end_to_end_seconds": 67.88880749998498,
+      "answer_token_count": 203
+    },
+    {
+      "id": "q005",
+      "category": "direct_factual",
+      "retrieval_seconds": 0.2519212000188418,
+      "generation_seconds": 61.894769500009716,
+      "end_to_end_seconds": 62.14669070002856,
+      "answer_token_count": 163
+    },
+    {
+      "id": "q006",
+      "category": "direct_factual",
+      "retrieval_seconds": 0.25777599998400547,
+      "generation_seconds": 58.420285500003956,
+      "end_to_end_seconds": 58.67806149998796,
+      "answer_token_count": 62
+    },
+    {
+      "id": "q007",
+      "category": "direct_factual",
+      "retrieval_seconds": 0.19720709999091923,
+      "generation_seconds": 62.01988509998773,
+      "end_to_end_seconds": 62.21709219997865,
+      "answer_token_count": 137
+    },
+    {
+      "id": "q008",
+      "category": "direct_factual",
+      "retrieval_seconds": 0.11287520002224483,
+      "generation_seconds": 84.79675420001149,
+      "end_to_end_seconds": 84.90962940003374,
+      "answer_token_count": 248
+    },
+    {
+      "id": "q009",
+      "category": "direct_factual",
+      "retrieval_seconds": 0.09868289998848923,
+      "generation_seconds": 76.23371919998317,
+      "end_to_end_seconds": 76.33240209997166,
+      "answer_token_count": 96
+    },
+    {
+      "id": "q010",
+      "category": "direct_factual",
+      "retrieval_seconds": 0.12429610002436675,
+      "generation_seconds": 78.35439200000837,
+      "end_to_end_seconds": 78.47868810003274,
+      "answer_token_count": 216
+    },
+    {
+      "id": "q011",
+      "category": "direct_factual",
+      "retrieval_seconds": 0.11562140000751242,
+      "generation_seconds": 65.979264900001,
+      "end_to_end_seconds": 66.09488630000851,
+      "answer_token_count": 283
+    },
+    {
+      "id": "q012",
+      "category": "direct_factual",
+      "retrieval_seconds": 0.1073644999996759,
+      "generation_seconds": 71.58126140001696,
+      "end_to_end_seconds": 71.68862590001663,
+      "answer_token_count": 271
+    },
+    {
+      "id": "q013",
+      "category": "identifier_lookup",
+      "retrieval_seconds": 0.12989589999779128,
+      "generation_seconds": 53.69161740000709,
+      "end_to_end_seconds": 53.82151330000488,
+      "answer_token_count": 40
+    },
+    {
+      "id": "q014",
+      "category": "identifier_lookup",
+      "retrieval_seconds": 0.12777750001987442,
+      "generation_seconds": 55.35309360001702,
+      "end_to_end_seconds": 55.48087110003689,
+      "answer_token_count": 39
+    },
+    {
+      "id": "q015",
+      "category": "identifier_lookup",
+      "retrieval_seconds": 0.11120260000461712,
+      "generation_seconds": 59.85523039998952,
+      "end_to_end_seconds": 59.96643299999414,
+      "answer_token_count": 116
+    }
+  ],
+  "aggregate": {
+    "retrieval_seconds": {
+      "mean": 1.0620959000021686,
+      "median": 0.12777750001987442,
+      "p95": 13.867707700002939
+    },
+    "generation_seconds": {
+      "mean": 68.25655022000234,
+      "median": 65.979264900001,
+      "p95": 87.52651150000747
+    },
+    "end_to_end_seconds": {
+      "mean": 69.31864612000452,
+      "median": 67.88880749998498,
+      "p95": 87.66489680000814
+    }
+  }
+}
