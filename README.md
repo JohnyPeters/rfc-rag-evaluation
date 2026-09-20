@@ -442,7 +442,7 @@ the right balance plausibly differs by query category — BM25 more useful for
 identifier lookups, less so for open direct-factual questions — so a single
 global weight tuned to the average query could improve one category while
 quietly hurting another, exactly what the per-category reporting exists to
-catch. See *Optional extensions*.
+catch. A per-category weighted RRF is a natural extension, not attempted here.
 
 **C1's section-aware rule, precisely:** one chunk per section by default,
 prefixed with **its own section number and title only** (e.g.
@@ -484,8 +484,8 @@ into C1 — whether chunking is section-aware, *and* how much ancestor context
 gets prefixed — when the ladder is designed to change exactly one thing at a
 time. Whether the extra ancestor context is worth that risk, particularly for
 broad-category queries whose vocabulary lives in a parent heading and never
-gets restated in the leaf section's own body text, is a real question — see
-*Optional extensions*.
+gets restated in the leaf section's own body text, is a real question this
+project leaves open rather than answers.
 
 **Section-header detection, precisely** (confirmed against `rfc9110.txt` and
 `rfc2616.txt`): a line counts as a section header only if it starts at column
@@ -829,9 +829,9 @@ reproduced in full.
   strong single conviction, and with three near-duplicate competitors
   splitting that moderate agreement across dense and BM25, the correctly-
   identified chunk from D1 alone never surfaces in the fusion. This is the
-  concrete case that motivates the weighted-RRF extension already noted
-  under Optional Extensions and Experiments - not a hypothetical concern
-  about the unweighted default, a measured instance of it.
+  concrete case that motivates a per-category weighted RRF (see the
+  Experiments section) - not a hypothetical concern about the unweighted
+  default, a measured instance of it.
 
   **Follow-up under C3.** The validity filter demotes RFC 7540's competing
   chunk (obsoleted, and 9113 - its replacement - is present among the
@@ -1070,6 +1070,25 @@ things that might go wrong.
   together because the question is about the change itself." This corpus,
   built around a real supersession graph, is exactly the kind of corpus where
   that third mode would be common in practice; this project does not attempt
-  it. See *Optional extensions* for the two mechanisms (LLM query
-  classification, evolution-aware grouping) that would be needed.
+  it. Handling it would need an LLM classifier upstream of retrieval (a plain
+  "RFC \d+" regex cannot recognise "how did this change over time" without a
+  named version) and a way to group near-duplicate evolving sections into one
+  candidate instead of letting them compete for ranking slots - neither
+  built here.
 
+## Status
+
+Complete: corpus ingestion, artefact stripping, section-tree parsing, both
+chunking strategies, dense/BM25/hybrid/validity-filtered retrieval (C0–C3,
+D1 diagnostic), retrieval metrics (Recall@k, MRR, hit rate), generation with
+citation parsing and refusal handling, generation metrics (citation validity,
+citation relevance, refusal/false-refusal rate), LLM-as-judge for correctness
+and faithfulness with a human-agreement check, k-sensitivity sweep, and
+per-stage latency measurement. All results tables above are from real,
+committed runs, not projections.
+
+Open: `unanswerable`/`superseded`/`explicit_historical_version` categories
+could grow further (currently 8/5/5 queries); a stale-answers metric
+(cross-referencing citations against obsolescence metadata) is designed but
+not wired in; bootstrap confidence intervals for the retrieval tables are
+not yet computed, per the Limitations section above.
