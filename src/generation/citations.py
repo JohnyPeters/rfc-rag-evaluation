@@ -49,12 +49,18 @@ def citation_validity(answer: str, context_chunks: list[dict]) -> dict:
 
     cited = extract_citations(answer)
     if not cited:
-        # No citations to check. A refusal correctly has none. A non-refusal
-        # answer with zero citations is a DIFFERENT failure (an unsupported
-        # claim) - that is caught by is_refusal() and a separate check the
-        # generation-evaluation harness runs, not by this function inventing
-        # a validity score for citations that were never made.
-        return {"citations": [], "valid": [], "invalid": [], "validity_rate": 1.0}
+        # A refusal correctly has zero citations - nothing to be wrong about.
+        # A NON-refusal answer with zero citations is a real rule violation
+        # (the prompt requires a citation per claim): 0.0, not a free pass.
+        # This distinction was missing in an earlier version - found via a
+        # real case (q032, a substantive, correct-sounding GOAWAY answer
+        # with no citation at all) that was silently scoring 1.0.
+        return {
+            "citations": [],
+            "valid": [],
+            "invalid": [],
+            "validity_rate": 1.0 if is_refusal(answer) else 0.0,
+        }
 
     valid = [c for c in cited if c in supplied]
     invalid = [c for c in cited if c not in supplied]
@@ -68,10 +74,12 @@ def citation_validity(answer: str, context_chunks: list[dict]) -> dict:
 
 def citation_relevance(answer: str, gold_sections: list[dict]) -> float:
     """Fraction of the answer's citations that intersect the query's gold
-    sections. 1.0 if the answer has no citations (nothing irrelevant was
-    cited, same reasoning as citation_validity's empty case)."""
+    sections. 1.0 if the answer is a refusal with no citations (nothing
+    irrelevant was cited); 0.0 if it is a substantive, non-refusal answer
+    with no citations at all - a real rule violation, not a free pass. Same
+    reasoning and the same fix as citation_validity's empty case."""
     gold = {(g["rfc"], g["section"]) for g in gold_sections}
     cited = set(extract_citations(answer))
     if not cited:
-        return 1.0
+        return 1.0 if is_refusal(answer) else 0.0
     return len(cited & gold) / len(cited)

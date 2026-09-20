@@ -30,7 +30,9 @@ Reference answer: {reference_answer}
 
 Generated answer: {answer}
 
-Judge the generated answer against the reference answer only - not against your own knowledge. Respond with a first line in exactly this format, then a brief justification:
+Judge the generated answer against the reference answer only - not against your own knowledge. Use partially_correct ONLY when the generated answer omits or gets wrong something that the QUESTION itself explicitly asked about. Extra detail that the reference answer happens to include, but that the question did not ask for, does not make an otherwise-correct answer partially_correct.
+
+Respond with a first line in exactly this format, then a brief justification:
 VERDICT: correct
 or
 VERDICT: partially_correct

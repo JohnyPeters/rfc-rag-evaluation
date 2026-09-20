@@ -30,8 +30,8 @@
       "id": "q003",
       "category": "direct_factual",
       "correctness": {
-        "verdict": "partially_correct",
-        "score": 0.5
+        "verdict": "correct",
+        "score": 1.0
       },
       "faithfulness": {
         "n_claims": 9,
@@ -82,8 +82,8 @@
       "id": "q007",
       "category": "direct_factual",
       "correctness": {
-        "verdict": "partially_correct",
-        "score": 0.5
+        "verdict": "correct",
+        "score": 1.0
       },
       "faithfulness": {
         "n_claims": 9,
@@ -108,8 +108,8 @@
       "id": "q009",
       "category": "direct_factual",
       "correctness": {
-        "verdict": "partially_correct",
-        "score": 0.5
+        "verdict": "correct",
+        "score": 1.0
       },
       "faithfulness": {
         "n_claims": 7,
@@ -316,8 +316,8 @@
       "id": "q020",
       "category": "multi_section",
       "correctness": {
-        "verdict": "partially_correct",
-        "score": 0.5
+        "verdict": "correct",
+        "score": 1.0
       },
       "faithfulness": {
         "n_claims": 5,
@@ -329,8 +329,8 @@
       "id": "q021",
       "category": "multi_section",
       "correctness": {
-        "verdict": "partially_correct",
-        "score": 0.5
+        "verdict": "correct",
+        "score": 1.0
       },
       "faithfulness": {
         "n_claims": 2,
@@ -355,8 +355,8 @@
       "id": "q023",
       "category": "multi_section",
       "correctness": {
-        "verdict": "partially_correct",
-        "score": 0.5
+        "verdict": "correct",
+        "score": 1.0
       },
       "faithfulness": {
         "n_claims": 18,
@@ -368,8 +368,8 @@
       "id": "q024",
       "category": "multi_section",
       "correctness": {
-        "verdict": "partially_correct",
-        "score": 0.5
+        "verdict": "correct",
+        "score": 1.0
       },
       "faithfulness": {
         "n_claims": 10,
@@ -407,8 +407,8 @@
       "id": "q032",
       "category": "superseded",
       "correctness": {
-        "verdict": "partially_correct",
-        "score": 0.5
+        "verdict": "correct",
+        "score": 1.0
       },
       "faithfulness": {
         "n_claims": 20,
@@ -420,8 +420,8 @@
       "id": "q033",
       "category": "superseded",
       "correctness": {
-        "verdict": "partially_correct",
-        "score": 0.5
+        "verdict": "correct",
+        "score": 1.0
       },
       "faithfulness": {
         "n_claims": 24,
@@ -459,8 +459,8 @@
       "id": "q036",
       "category": "superseded",
       "correctness": {
-        "verdict": "partially_correct",
-        "score": 0.5
+        "verdict": "correct",
+        "score": 1.0
       },
       "faithfulness": {
         "n_claims": 2,
@@ -485,8 +485,8 @@
       "id": "q038",
       "category": "explicit_historical_version",
       "correctness": {
-        "verdict": "partially_correct",
-        "score": 0.5
+        "verdict": "correct",
+        "score": 1.0
       },
       "faithfulness": {
         "n_claims": 38,
@@ -524,8 +524,8 @@
       "id": "q041",
       "category": "explicit_historical_version",
       "correctness": {
-        "verdict": "partially_correct",
-        "score": 0.5
+        "verdict": "correct",
+        "score": 1.0
       },
       "faithfulness": {
         "n_claims": 2,
@@ -537,7 +537,7 @@
   "aggregate": {
     "n_total": 41,
     "n_answered": 41,
-    "mean_correctness": 0.8536585365853658,
+    "mean_correctness": 1.0,
     "n_correctness_unparseable": 0,
     "mean_faithfulness": 0.8526875370679644,
     "n_faithfulness_unparseable": 0
@@ -546,7 +546,7 @@
     "direct_factual": {
       "n_total": 12,
       "n_answered": 12,
-      "mean_correctness": 0.875,
+      "mean_correctness": 1.0,
       "n_correctness_unparseable": 0,
       "mean_faithfulness": 0.7611266728913787,
       "n_faithfulness_unparseable": 0
@@ -554,7 +554,7 @@
     "explicit_historical_version": {
       "n_total": 5,
       "n_answered": 5,
-      "mean_correctness": 0.8,
+      "mean_correctness": 1.0,
       "n_correctness_unparseable": 0,
       "mean_faithfulness": 0.8501461988304093,
       "n_faithfulness_unparseable": 0
@@ -570,7 +570,7 @@
     "multi_section": {
       "n_total": 8,
       "n_answered": 8,
-      "mean_correctness": 0.75,
+      "mean_correctness": 1.0,
       "n_correctness_unparseable": 0,
       "mean_faithfulness": 0.8711805555555555,
       "n_faithfulness_unparseable": 0
@@ -578,7 +578,7 @@
     "superseded": {
       "n_total": 5,
       "n_answered": 5,
-      "mean_correctness": 0.7,
+      "mean_correctness": 1.0,
       "n_correctness_unparseable": 0,
       "mean_faithfulness": 0.8727272727272727,
       "n_faithfulness_unparseable": 0
