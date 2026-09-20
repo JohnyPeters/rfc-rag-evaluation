@@ -60,7 +60,7 @@ The project question follows directly:
 
 ## Objectives
 
-The project will investigate, in order:
+The project investigated, in order:
 
 1. Whether structure-aware chunking beats fixed-size windowing on a corpus whose
    structure is explicit, and on which query categories the difference shows up.
@@ -75,7 +75,7 @@ The project will investigate, in order:
    generation problem, measured separately rather than inferred from
    end-to-end answer quality.
 
-Equally important, what this project will **not** do, and why:
+Equally important, what this project does **not** do, and why:
 
 | Not investigated | Reason |
 |---|---|
@@ -174,34 +174,38 @@ the retrieval logic asked for.
 
 ## Evaluation Dataset
 
-Roughly **65 queries** at full size, hand-written before any retrieval output is
-inspected, so that the set measures the system rather than being shaped by it.
-Provenance for each query is recorded.
+**49 queries** in the finished set (`eval/queries.yaml`, `q001`-`q049`),
+hand-written before any retrieval output was inspected, so that the set
+measures the system rather than being shaped by it. Provenance for each
+query is recorded.
 
-**The set is built in two passes, not all at once.** The MVP needs only 25–30
-queries covering the first three categories, enough to measure C0 against C1
-and get real numbers out of a working pipeline early. Superseded, unanswerable
-and explicit-version queries are written in the second pass, once retrieval is
-trustworthy and the configurations those categories exist to discriminate (C2,
-C3) are actually being built. Writing all of it up front would mean spending
-the first week on a benchmark for an implementation that has not yet been
-validated.
+**The set was built in two passes, not all at once.** The MVP started with
+25 queries covering the first three categories, enough to measure C0 against
+C1 and get real numbers out of a working pipeline early. Superseded,
+unanswerable and explicit-version queries were written in a second pass,
+once retrieval was trustworthy and the configurations those categories exist
+to discriminate (C2, C3) actually existed. Identifier lookup grew from an
+original 6 to 11 mid-way through (`q027`-`q031` added), because the first 6
+had already hit a perfect Recall@5 on C1, a ceiling that would have left no
+way to tell whether C2 moves this category at all. Writing all of it up
+front would have meant spending the first week on a benchmark for an
+implementation that had not yet been validated.
 
-| Category | Count | What it tests | Written in |
-|---|---:|---|---|
-| Direct factual | 20 | Single-section answer. The floor: if this is weak, nothing else matters. | MVP |
-| Identifier lookup | 11 | Exact header name, status code, section or RFC number. The category that tests the lexical-retrieval hypothesis. Grown from an original 6 mid-MVP (`q027`-`q031`), because the first 6 already hit a perfect Recall@5 on C1, a ceiling that would have left no way to tell whether C2 moves this category at all. | MVP |
-| Multi-section | 12 | Evidence in two or more sections, often across documents via a cross-reference. | MVP |
-| Superseded | 5 (target 10) | Answerable from both an obsoleted and a current RFC, where only the current answer is correct. The trap in one direction: assume current unless told otherwise. First 5 written as matched pairs with Explicit historical version below (`q032`-`q036`), specifically to have real data once C3 existed to test them against. | Phase 2 |
-| Explicit historical version | 5 (target 6) | Names an old RFC directly (e.g. "In RFC 2616, how is chunked encoding framed?"), where the obsoleted document is the *correct* answer. The trap in the opposite direction: an over-eager validity filter must not suppress a version the user explicitly asked for. Mirrors the 5 Superseded pairs exactly (`q037`-`q041`), gold and distractor swapped. | Phase 2 |
-| Unanswerable | 8 | Plausible, on-topic, and genuinely not in the corpus. Correct behaviour is refusal. | Phase 2 |
+| Category | Count | What it tests |
+|---|---:|---|
+| Direct factual | 12 | Single-section answer. The floor: if this is weak, nothing else matters. |
+| Identifier lookup | 11 | Exact header name, status code, section or RFC number. The category that tests the lexical-retrieval hypothesis. |
+| Multi-section | 8 | Evidence in two or more sections, often across documents via a cross-reference. |
+| Superseded | 5 | Answerable from both an obsoleted and a current RFC, where only the current answer is correct. The trap in one direction: assume current unless told otherwise. Written as matched pairs with Explicit historical version below (`q032`-`q036`), so both traps have real data to test C3 against. |
+| Explicit historical version | 5 | Names an old RFC directly (e.g. "In RFC 2616, how is chunked encoding framed?"), where the obsoleted document is the *correct* answer. The trap in the opposite direction: an over-eager validity filter must not suppress a version the user explicitly asked for. Mirrors the 5 Superseded pairs exactly (`q037`-`q041`), gold and distractor swapped. |
+| Unanswerable | 8 | Plausible, on-topic, and genuinely not in the corpus. Correct behaviour is refusal. |
 
 Recorded per query:
 
 ```yaml
-id: q017
+id: q036
 query: "What header field tells a client how long to wait before retrying, and what two formats can its value take?"
-category: identifier_lookup
+category: superseded
 difficulty: medium
 gold_sections:                  # the unit of truth - see below
   - {rfc: 9110, section: "10.2.3"}
@@ -210,30 +214,32 @@ reference_answer: "Retry-After. Its value is either an HTTP-date or a number of 
 expected_behaviour: answer      # answer | refuse
 distractor_sections:            # for superseded and explicit-version queries -
   - {rfc: 2616, section: "14.37"}   # the obsoleted source that must NOT win
-notes: "Tests whether the exact header-field token survives dense-only retrieval.
-  (An earlier draft of this example used RFC 6585 and status 429, verified
-  against the fetched corpus and found not to exist in it; 6585 was never one
-  of the 16 documents fetched. Replaced with Retry-After, confirmed present at
-  this exact location in both rfc9110.txt and rfc2616.txt.)"
+notes: "The same query used earlier in this file's schema documentation
+  (q017's original, now-fixed slot) - kept here as the actual
+  superseded-category instance it always should have been, now with a
+  verified distractor. An early draft of this query used RFC 6585 and status
+  429, which was verified against the fetched corpus and found not to exist
+  in it; 6585 was never one of the 16 documents fetched, and the query was
+  rewritten to this one instead."
 ```
 
 An *explicit historical version* query inverts which document is gold and
 which is the distractor, versus a *superseded* one:
 
 ```yaml
-id: q052
-query: "In RFC 2616, how is a chunked message body terminated?"
+id: q039
+query: "In RFC 2616, how does chunked transfer coding structure the body of a message?"
 category: explicit_historical_version
 difficulty: medium
 gold_sections:
   - {rfc: 2616, section: "3.6.1"}   # the obsoleted document is correct HERE
 gold_documents: [2616]
-reference_answer: "By a chunk of size zero, optionally followed by trailer headers."
+reference_answer: "As a series of chunks, each with its own size indicator, followed by an optional trailer containing entity-header fields."
 expected_behaviour: answer
 distractor_sections:                # the current RFC must NOT override the ask
-  - {rfc: 9112, section: "7.1.1"}
-notes: "Tests whether validity filtering (C3) over-corrects and suppresses a
-  version the query named on purpose."
+  - {rfc: 9112, section: "7.1.3"}
+notes: "Mirrors q034 (the superseded pair). Tests whether validity filtering
+  (C3) over-corrects and suppresses a version the query named on purpose."
 ```
 
 **Gold labels are at section granularity, not chunk granularity.** This is the
@@ -764,7 +770,10 @@ cross-document-homonym failure modes described in Error Analysis.
 `multi_section` never reaches perfect recall even at `k=20` (0.9375); it is
 the one category where widening `k` alone does not close the gap.
 
-Every table is to be generated from `results/` by a script, never typed by hand.
+Every number in these tables was read from the corresponding file in
+`results/`, not typed from memory; there is no script that regenerates the
+tables automatically (`make_tables.py` in Planned Repository Structure below
+was not built).
 
 ## Error Analysis
 
@@ -1001,9 +1010,12 @@ python scripts/fetch_corpus.py
 
 ## Reproducibility
 
-- **Configuration as data.** One YAML per configuration, covering chunking,
-  retrieval, k, models and prompt version. Nothing that affects a result lives
-  in a function default.
+- **Configuration as code, not as data.** Each configuration (C0-C3, D1) is a
+  named code path (`src/retrieval/*.py`, dispatched by a `strategy` string in
+  `src/evaluation/run_eval.py`), not a YAML file; `configs/` exists as a
+  placeholder for a config-as-data refactor that was not carried out. What
+  each configuration holds fixed (chunking, retrieval, k, models, prompt
+  version) is documented in the Experiments table above.
 - **Pinned dependencies**, with the Python version recorded. Python 3.14, exact
   vector search via plain numpy/scikit-learn (no FAISS, unnecessary at this
   corpus size), `requirements.txt` rather than a lockfile-based manager, to
@@ -1013,9 +1025,12 @@ python scripts/fetch_corpus.py
   it. Where a hosted model is used, the model version and date are recorded, and
   the fact that determinism is not guaranteed is stated rather than assumed
   away.
-- **Results are artefacts.** Each run writes metrics, timings and raw answers to
-  `results/<config>/`, stamped with the config hash and corpus checksum. README
-  tables are generated from those files.
+- **Results are artefacts.** Each run writes metrics, timings and raw answers
+  as JSON to `results/<config>/`, and the numbers in this README are read
+  directly from those files (not typed by hand, though there is no script
+  yet that regenerates the tables automatically). Runs do not currently
+  stamp a config hash or corpus checksum into the output; that is not
+  implemented.
 - **The evaluation set is committed** and versioned. If a query is corrected
   after error analysis, the change is a visible commit, not a silent edit.
 
@@ -1050,7 +1065,8 @@ things that might go wrong.
   queries before inspecting any retrieval output limits the bias; it does not
   remove it.
 - **Section-level gold labelling favours long sections**, which are easier to
-  hit. The section-length distribution will be reported alongside the metrics.
+  hit. The section-length distribution behind this bias has not been
+  reported alongside the metrics.
 - **The superseded-query category is constructed.** It shows the failure mode
   exists and can be measured; it says nothing about how often real users would
   hit it.
