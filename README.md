@@ -320,11 +320,12 @@ an average, and the per-category table is what makes that visible.
 
 ## Generation Evaluation
 
-> **Second phase, not the MVP.** Nothing in this section is required for the
-> first milestone. Retrieval evaluation has to be working and trustworthy
-> before any of it is built, because a generation metric computed on top of an
-> untrusted retrieval score is a number with no interpretation. In particular,
-> the LLM-as-judge harness is the last thing to be implemented, not the first.
+> **Built as a second phase, after the MVP, deliberately.** None of this was
+> part of the first milestone. Retrieval evaluation had to be working and
+> trustworthy before any of it was built, because a generation metric
+> computed on top of an untrusted retrieval score is a number with no
+> interpretation. In particular, the LLM-as-judge harness was the last thing
+> implemented, not the first.
 
 Deliberately weighted towards things that can be checked programmatically, with
 model-judged metrics used only where nothing cheaper works.
@@ -338,11 +339,13 @@ model-judged metrics used only where nothing cheaper works.
 | **Answer correctness** | LLM-as-judge against the reference answer, three-level rubric: correct / partially correct / incorrect. | Judged |
 | **Faithfulness** | LLM-as-judge, claim-level, with the supplied context: is every assertion supported by it? | Judged |
 
-The two judged metrics get a reliability check rather than a free pass: I will
-label a 20-query subsample by hand and report **judge–human agreement**. If
-agreement is poor, the judged numbers are reported as indicative and the
-objective metrics carry the conclusions. A judge whose agreement is never
-measured is an unvalidated instrument.
+The two judged metrics get a reliability check rather than a free pass: a
+20-query subsample was labelled by hand and compared against the judge's
+verdicts for **judge–human agreement** (see the "Judge-human agreement"
+result under Metrics and Reporting). Where agreement came back poor, the
+affected judged numbers are reported as indicative rather than settled,
+alongside the objective metrics that carry the rest of the conclusions. A
+judge whose agreement is never measured is an unvalidated instrument.
 
 **The generation model: local, via Ollama** (`llama3.1:8b`), not a paid API.
 It is free, and the exact model file can be pinned for reproducibility, at
